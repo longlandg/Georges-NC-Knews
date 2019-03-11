@@ -16,6 +16,23 @@ exports.createRef = (articleRows, title, article_id) => articleRows.reduce((acc,
   return acc;
 }, {});
 
+exports.createArticleIdLink = (commentRows, refObject) => {
+  const formattedComments = commentRows.map(comment => ({
+    author: comment.created_by,
+    article_id: refObject[comment.belongs_to],
+    votes: comment.votes || 0,
+    created_at: new Date(comment.created_at),
+    body: comment.body,
+  }));
+  return formattedComments;
+};
+
+
+// author: testComments.created_by,
+//           article_id: testRefObject.belongs_to,
+//           votes: testComments.votes,
+//           created_at: new Date('2017-07-20T20:57:53.256Z'),
+//           body: testedComments.body,
 
 // .then(ownerRows => {
 //     const ownerRef = createRef(ownerRows, 'forename', 'owner_id');

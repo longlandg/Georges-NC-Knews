@@ -1,6 +1,6 @@
 
 const { expect } = require('chai');
-const { createTimeStamp, createRef } = require('../utils/utils.js');
+const { createTimeStamp, createRef, createArticleIdLink } = require('../utils/utils.js');
 
 describe('createTimeStamp', () => {
   it('returns an array of 1 obj where the date stamp has been changed', () => {
@@ -29,7 +29,7 @@ describe('createTimeStamp', () => {
 });
 
 describe('createRef', () => {
-  it('returns an array of 1 obj where the date stamp has been changed', () => {
+  it('returns an 1 obj where the key is the title and the value is the id', () => {
     const testArticle = [{
       article_id: 1,
       title: 'The Rise Of Thinking Machines',
@@ -46,3 +46,36 @@ describe('createRef', () => {
     expect(actual).to.eql(expected);
   });
 });
+
+
+describe('createArticleIdLink', () => {
+  it('returns an array of 1 obj where the all info is correct including a article id', () => {
+    const testRefObject = { 'The Rise Of Thinking Machines': 1 };
+    const testComments = [{
+      body: 'I carry a log — yes. Is it funny to you? It is not to me.',
+      belongs_to: 'The Rise Of Thinking Machines',
+      created_by: 'icellusedkars',
+      votes: 0,
+      created_at: 1500584273256,
+    }];
+    const actual = createArticleIdLink(testComments, testRefObject);
+    const expected = [{
+      author: 'icellusedkars',
+      article_id: 1,
+      votes: 0,
+      created_at: new Date('2017-07-20T20:57:53.256Z'),
+      body: 'I carry a log — yes. Is it funny to you? It is not to me.',
+    }];
+
+    expect(actual).to.eql(expected);
+  });
+});
+
+
+//   {
+//     body: ' I carry a log — yes. Is it funny to you? It is not to me.',
+//     belongs_to: 'Living in the shadow of a great man',
+//     created_by: 'icellusedkars',
+//     votes: -100,
+//     created_at: 1416746163389,
+//   },
