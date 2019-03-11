@@ -12,10 +12,10 @@ exports.seed = function (knex, Promise) {
       const formattedArticleData = createTimeStamp(articleData);
       return knex.insert(formattedArticleData).into('articles').returning('*');
     })
-    .then((article) => {
-      // const title = article.title;
-      // const article_id = 'article_id';
-      const refObject = createRef(articleData, title, article_id);
+    .then((formattedArticleData) => {
+      const title = 'title';
+      const article_id = 'article_id';
+      const refObject = createRef(formattedArticleData, title, article_id);
       return refObject;
     })
     .then((refObject) => {

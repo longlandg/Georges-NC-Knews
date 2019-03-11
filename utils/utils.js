@@ -13,7 +13,6 @@ exports.createTimeStamp = ((testArticle) => {
 
 exports.createRef = (articleRows, title, article_id) => articleRows.reduce((acc, element) => {
   acc[element[title]] = element[article_id];
-  console.log(acc)
   return acc;
 }, {});
 
