@@ -1,4 +1,5 @@
 const { articleData, topicData, userData, commentData} = require('../data');
+const { createTimeStamp } = require('../../utils/utils.js');
 
 exports.seed = function (knex, Promise) {
   return knex.migrate.rollback()
@@ -10,22 +11,10 @@ exports.seed = function (knex, Promise) {
         return knex.insert(topicData).into('topics').returning('*') 
     })
     .then(() => {
-
-
-        const formattedArticleData = articleData.map(article => {
-            const date = new Date(article.created_at);
-            return {
-                title: article.title,
-                body: article.body,
-                votes: article.votes || 0,
-                topic...article.Date
-                AudioTrack...AudioTrack..Date
-                created_at: date,
-            }
+        const formattedArticleData = createTimeStamp(articleData)
             return knex.insert(formattedArticleData).into('articles').returning('*')
         })
-        let dateStamp = new Date()
+       
 
     
-    } ))
-};
+    } 
