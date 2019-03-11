@@ -11,6 +11,23 @@ exports.createTimeStamp = ((testArticle) => {
 });
 
 
+exports.createRef = (articleRows, title, article_id) => articleRows.reduce((acc, element) => {
+  acc[element[title]] = element[article_id];
+  return acc;
+}, {});
+
+
+// .then(ownerRows => {
+//     const ownerRef = createRef(ownerRows, 'forename', 'owner_id');
+//     const shops = shopData.map(shop => {
+//         const {shop_name, slogan} = shop;
+//         const newShop = {
+//             shop_name,
+//             owner_id: ownerRef[shop.owner],
+//             slogan
+//         }
+//         return newShop;
+
 // console.log(new Date(1500584273256))
 
 
