@@ -19,5 +19,44 @@ describe('/', () => {
           expect(body.topics[0]).contain.keys('slug', 'description');
         }));
     });
+    describe('/topics', () => {
+      it('POST status : 201 and returns an array with a single object', () => {
+        const topicToPost = { slug: 'bananas', description: 'The tastiest of all the fruits' };
+        return request.post('/api/topics').send(topicToPost)
+          .expect(201)
+          .then(({ body }) => {
+            expect(body.topic).contain.keys('slug', 'description');
+            expect(body.topic).to.eql(topicToPost);
+            expect(body).to.be.a('object');
+          });
+      });
+    });
+    xdescribe('/topics', () => {
+      it('POST status : 900 and an error object with key of msg', () => {
+        const topicToPost = { slug: 'mitch', description: 'The tastiest of all the fruits' };
+        return request.post('/api/topics').send(topicToPost)
+          .expect(422)
+          .then(({ body }) => {
+            console.log({ body });
+            expect(body).contain.key('code');
+            expect(body.code).to.eql('2305');
+          });
+      });
+    });
+    describe('/articles', () => {
+      it('GET status : 200 and returns an array o33333f objects', () => request.get('/api/articles')
+        .expect(200)
+        .then((res) => {
+          // expect(res.body.articles.length).to.equal(12);
+          expect(res.body.articles[0]).contain.keys('author', 'title', 'article_id', 'topic', 'created_at', 'votes', 'comment_count');
+        }));
+      it('GET status : 200 and returns an array of objects filtered by author', () => request.get('/api/articles?author=icellusedkars')
+        .expect(200)
+        .then((res) => {
+          console.log(res.body.articles);
+          expect(res.body.articles.length).to.equal(6);
+          expect(res.body.articles[0]).contain.keys('author', 'title', 'article_id', 'topic', 'created_at', 'votes', 'comment_count');
+        }));
+    });
   });
 });
