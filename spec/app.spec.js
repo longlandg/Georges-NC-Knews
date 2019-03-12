@@ -53,9 +53,32 @@ describe('/', () => {
       it('GET status : 200 and returns an array of objects filtered by author', () => request.get('/api/articles?author=icellusedkars')
         .expect(200)
         .then((res) => {
-          console.log(res.body.articles);
           expect(res.body.articles.length).to.equal(6);
           expect(res.body.articles[0]).contain.keys('author', 'title', 'article_id', 'topic', 'created_at', 'votes', 'comment_count');
+        }));
+      it('GET status : 200 and returns an array of objects filtered by topic', () => request.get('/api/articles?topic=cats')
+        .expect(200)
+        .then((res) => {
+          expect(res.body.articles.length).to.equal(1);
+          expect(res.body.articles[0]).contain.keys('author', 'title', 'article_id', 'topic', 'created_at', 'votes', 'comment_count');
+        }));
+      it('GET status : 200 and returns an array of objects sorted by date by default in desc order', () => request.get('/api/articles')
+        .expect(200)
+        .then((res) => {
+          console.log(res.body.articles[0].article_id);
+          expect(res.body.articles[0].article_id).to.equal(1);
+        }));
+      it('GET status : 200 and returns an array of objects sorted by a valid column by default in desc order', () => request.get('/api/articles?sort_by=article_id')
+        .expect(200)
+        .then((res) => {
+          console.log(res.body.articles[0].article_id);
+          expect(res.body.articles[0].article_id).to.equal(12);
+        }));
+      it('GET status : 200 and returns an array of objects sorted by a valid column by having changed to asc through a query', () => request.get('/api/articles?sort_by=article_id&&order=asc')
+        .expect(200)
+        .then((res) => {
+          console.log(res.body.articles[0].article_id);
+          expect(res.body.articles[0].article_id).to.equal(1);
         }));
     });
   });
