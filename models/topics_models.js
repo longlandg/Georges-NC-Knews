@@ -1,7 +1,5 @@
 const connection = require('../db/connection');
 
+console.log('im in the fetchAllTopics model');
 
-exports.fetchAllTopics = () => {
-  console.log('im in the fetchAllTopics model');
-  return connection.select('*').from('topics').returning('*');
-};
+exports.fetchAllTopics = () => connection.select('*').from('topics').returning('*');

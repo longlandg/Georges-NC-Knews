@@ -1,7 +1,7 @@
 const apiRouter = require('express').Router();
 const topicsRouter = require('./topicsRouter.js');
 
-apiRouter.use('/', topicsRouter);
+apiRouter.use('/topics', topicsRouter);
 
 
 module.exports = apiRouter;
