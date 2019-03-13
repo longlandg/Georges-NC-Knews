@@ -118,7 +118,7 @@ describe('/', () => {
           expect(res.body).to.eql({});
         }));
     });
-    describe.only('/articles/:article_id/comments', () => {
+    describe('/articles/:article_id/comments', () => {
       it('GET status : 200 and returns an array of comments for a given ID', () => request.get('/api/articles/6/comments')
         .expect(200)
         .then((res) => {
@@ -142,6 +142,16 @@ describe('/', () => {
             expect(Object.keys(res.body)[0]).to.equal('comment');
           });
       });
+    
+    });
+    describe.only('/comments/:comments_id', () => {
+      it('PATCH status : 200 and increments vote of a comment by new vote amount', () => request.patch('/api/comments/5')
+        .send({ inc_votes: 1 })
+        .expect(202)
+        .then((res) => {
+          expect(res.body.updatedComments).to.be.an('object');
+          expect(res.body.updatedcomments.votes).to.equal(1);
+        }));
     });
   });
 });
