@@ -1,5 +1,5 @@
 const {
-  fetchAllArticles, removeArticle, fetchArticleById, addArticle, updateArticle,
+  fetchAllArticles, addComment, fetchCommentsbyArticleId, removeArticle, fetchArticleById, addArticle, updateArticle,
 } = require('../models/articles_models');
 
 console.log('im in the articles controller');
@@ -56,7 +56,7 @@ exports.patchArticleById = (req, res, next) => {
   const { inc_votes } = req.body;
 
   updateArticle(article_id, inc_votes)
-    .then((updatedArticle) => {
+    .then(([updatedArticle]) => {
       res.status(202).send({ updatedArticle });
     });
 };
@@ -66,5 +66,32 @@ exports.deleteArticleById = (req, res, next) => {
   removeArticle(article_id)
     .then(() => {
       res.status(204).send({});
+    });
+};
+
+exports.getAllCommentsByArticleId = (req, res, next) => {
+  const { article_id } = req.params;
+  const { sort_by, order } = req.query;
+
+  fetchCommentsbyArticleId(article_id, sort_by, order)
+    .then((comments) => {
+      res.status(200).send({ comments });
+    });
+};
+
+
+exports.postCommentOnArticle = (req, res, next) => {
+  const commentToPost = req.body;
+  const { article_id } = req.params;
+
+
+  const formattedPost = {
+    author: commentToPost.username,
+    body: commentToPost.body,
+    article_id,
+  };
+  addComment(formattedPost)
+    .then(([comment]) => {
+      res.status(201).send({ comment });
     });
 };

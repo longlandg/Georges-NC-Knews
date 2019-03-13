@@ -76,7 +76,7 @@ describe('/', () => {
         .then((res) => {
           expect(res.body.articles[0].article_id).to.equal(1);
         }));
-      it.only('POST status : 201 and returns an array with a single article object', () => {
+      it('POST status : 201 and returns an array with a single article object', () => {
         const articleToPost = {
           title: 'cats and their hats', body: 'something something hatty catty', topic: 'cats', username: 'rogersop',
         };
@@ -108,31 +108,40 @@ describe('/', () => {
         .send({ inc_votes: 1 })
         .expect(202)
         .then((res) => {
-          console.log(res.body.updatedArticle);
-          expect(res.body.updatedArticle[0]).to.be.an('object');
-          expect(res.body.updatedArticle[0].votes).to.equal(101);
+          expect(res.body.updatedArticle).to.be.an('object');
+          expect(res.body.updatedArticle.votes).to.equal(101);
         }));
-      it.only('DELETE status : 204 and return message of ', () => request.delete('/api/articles/1')
+      it('DELETE status : 204 and return message of ', () => request.delete('/api/articles/1')
 
         .expect(204)
         .then((res) => {
           expect(res.body).to.eql({});
-          console.log(res.body);
         }));
+    });
+    describe.only('/articles/:article_id/comments', () => {
+      it('GET status : 200 and returns an array of comments for a given ID', () => request.get('/api/articles/6/comments')
+        .expect(200)
+        .then((res) => {
+          expect(res.body.comments).to.be.an('array');
+          expect(res.body.comments.length).to.equal(1);
+        }));
+      it('GET status : 200 and returns an array of comments for a given ID', () => request.get('/api/articles/5/comments?sort_by=comments_id&&order=asc')
+        .expect(200)
+        .then((res) => {
+          expect(res.body.comments[0]).to.be.an('object');
+          expect(res.body.comments[0].comments_id).to.equal(14);
+        }));
+      it('POST status : 200 and a comment object with key of comment', () => {
+        const commentToPost = { username: 'icellusedkars', body: 'words cant explain how brilliant this article' };
+        request.post('/api/articles/5/comments').send(commentToPost)
+          .expect(201)
+          .then((res) => {
+            expect(res.body.comment).to.be.an('object');
+            expect(res.body.comment).to.contain.keys('comments_id', 'article_id', 'votes', 'created_at', 'author', 'body');
+            expect(res.body.comment.article_id).to.equal(5);
+            expect(Object.keys(res.body)[0]).to.equal('comment');
+          });
+      });
     });
   });
 });
-
-
-// describe('/topics', () => {
-//   it('POST status : 201 and returns an array with a single object', () => {
-//     const topicToPost = { slug: 'bananas', description: 'The tastiest of all the fruits' };
-//     return request.post('/api/topics').send(topicToPost)
-//       .expect(201)
-//       .then(({ body }) => {
-//         expect(body.topic).contain.keys('slug', 'description');
-//         expect(body.topic).to.eql(topicToPost);
-//         expect(body).to.be.a('object');
-//       });
-//   });
-// });

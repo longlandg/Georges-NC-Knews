@@ -38,3 +38,12 @@ exports.removeArticle = article_id => connection
   .from('articles')
   .where({ 'articles.article_id': article_id })
   .del();
+
+exports.fetchCommentsbyArticleId = (article_id, sort_by, order) => connection
+  .select('comments_id', 'votes', 'created_at', 'author', 'body')
+  .from('comments')
+  .where({ 'comments.article_id': article_id })
+  .orderBy(sort_by || 'comments.created_at', order || 'desc');
+
+exports.addComment = newComment => connection
+  .insert(newComment).into('comments').returning('*');
