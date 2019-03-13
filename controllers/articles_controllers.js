@@ -1,4 +1,4 @@
-const { fetchAllArticles } = require('../models/articles_models');
+const { fetchAllArticles, addArticle } = require('../models/articles_models');
 
 console.log('im in the articles controller');
 
@@ -6,7 +6,7 @@ exports.getAllArticles = (req, res, next) => {
   const { sort_by, order } = req.query;
   let authorCondition = {};
   let topicCondition = {};
-  const createdCondition = {};
+  let createdCondition = {};
 
   Object.keys(req.query).forEach((key) => {
     if (key === 'author') {
@@ -14,7 +14,7 @@ exports.getAllArticles = (req, res, next) => {
     } else if (key === 'topic') {
       topicCondition = { 'articles.topic': req.query[key] };
     } else if (key === 'created') {
-      topicCondition = { 'articles.created_at': req.query[key] };
+      createdCondition = { 'articles.created_at': req.query[key] };
     }
   });
 
@@ -22,5 +22,22 @@ exports.getAllArticles = (req, res, next) => {
   fetchAllArticles(authorCondition, sort_by, order, topicCondition, createdCondition)
     .then((articles) => {
       res.status(200).send({ articles });
+    });
+};
+
+exports.postArticle = (req, res, next) => {
+  const articleToPost = req.body;
+  const foramttedArticle = {
+    title: articleToPost.title,
+    body: articleToPost.body,
+    topic: articleToPost.topic,
+    author: articleToPost.username,
+  };
+
+  console.log('this is the reqbody', req.body);
+  addArticle(foramttedArticle)
+    .then(([article]) => {
+      console.log('this is the article', article);
+      res.status(201).send({ article });
     });
 };

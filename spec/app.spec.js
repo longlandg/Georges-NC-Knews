@@ -44,10 +44,9 @@ describe('/', () => {
       });
     });
     describe('/articles', () => {
-      it('GET status : 200 and returns an array o33333f objects', () => request.get('/api/articles')
+      it('GET status : 200 and returns an array of objects', () => request.get('/api/articles')
         .expect(200)
         .then((res) => {
-          // expect(res.body.articles.length).to.equal(12);
           expect(res.body.articles[0]).contain.keys('author', 'title', 'article_id', 'topic', 'created_at', 'votes', 'comment_count');
         }));
       it('GET status : 200 and returns an array of objects filtered by author', () => request.get('/api/articles?author=icellusedkars')
@@ -80,6 +79,33 @@ describe('/', () => {
           console.log(res.body.articles[0].article_id);
           expect(res.body.articles[0].article_id).to.equal(1);
         }));
+      it.only('POST status : 201 and returns an array with a single article object', () => {
+        const articleToPost = {
+          title: 'cats and their hats', body: 'something something hatty catty', topic: 'cats', username: 'rogersop',
+        };
+        return request.post('/api/articles')
+          .send(articleToPost)
+          .expect(201)
+          .then((res) => {
+            console.log(res.body);
+            expect(res.body.article).to.be.an('object');
+            expect(res.body.article).to.contain.keys('article_id', 'title', 'body', 'created_at', 'topic', 'author', 'votes');
+          });
+      });
     });
   });
 });
+
+
+// describe('/topics', () => {
+//   it('POST status : 201 and returns an array with a single object', () => {
+//     const topicToPost = { slug: 'bananas', description: 'The tastiest of all the fruits' };
+//     return request.post('/api/topics').send(topicToPost)
+//       .expect(201)
+//       .then(({ body }) => {
+//         expect(body.topic).contain.keys('slug', 'description');
+//         expect(body.topic).to.eql(topicToPost);
+//         expect(body).to.be.a('object');
+//       });
+//   });
+// });

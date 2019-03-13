@@ -2,7 +2,8 @@ const connection = require('../db/connection');
 
 console.log('im in the articles model');
 
-exports.fetchAllArticles = (authorCondition, sort_by, order, topicCondition, createdCondition) => connection
+exports.fetchAllArticles = (authorCondition, sort_by,
+  order, topicCondition, createdCondition) => connection
   .select('articles.article_id', 'articles.title', 'articles.body', 'articles.votes', 'articles.topic', 'articles.author', 'articles.created_at')
   .from('articles')
   .where(authorCondition)
@@ -12,8 +13,11 @@ exports.fetchAllArticles = (authorCondition, sort_by, order, topicCondition, cre
   .groupBy('articles.article_id')
   .count('comments.comments_id as comment_count')
   .orderBy(sort_by || 'articles.created_at', order || 'desc');
-//   .orderBy('articles.article_id', order || 'asc');
-//   .orderBy('articles.article_id', 'asc');
 
 
-//   .orderBy('articles.article_id');
+exports.addArticle = newArticle => connection
+  .insert(newArticle).into('articles').returning('*');
+
+
+// exports.addArticle = newArticle => connection
+// .insert('title', 'body', 'topic', 'username' ,).into('articles').returning('*');
