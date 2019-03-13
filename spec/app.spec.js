@@ -64,19 +64,16 @@ describe('/', () => {
       it('GET status : 200 and returns an array of objects sorted by date by default in desc order', () => request.get('/api/articles')
         .expect(200)
         .then((res) => {
-          console.log(res.body.articles[0].article_id);
           expect(res.body.articles[0].article_id).to.equal(1);
         }));
       it('GET status : 200 and returns an array of objects sorted by a valid column by default in desc order', () => request.get('/api/articles?sort_by=article_id')
         .expect(200)
         .then((res) => {
-          console.log(res.body.articles[0].article_id);
           expect(res.body.articles[0].article_id).to.equal(12);
         }));
       it('GET status : 200 and returns an array of objects sorted by a valid column by having changed to asc through a query', () => request.get('/api/articles?sort_by=article_id&&order=asc')
         .expect(200)
         .then((res) => {
-          console.log(res.body.articles[0].article_id);
           expect(res.body.articles[0].article_id).to.equal(1);
         }));
       it.only('POST status : 201 and returns an array with a single article object', () => {
@@ -92,12 +89,28 @@ describe('/', () => {
           });
       });
     });
-    describe.only('/articles/:article_id', () => {
+    describe('/articles/:article_id', () => {
       it('GET status : 200 and returns an array of objects', () => request.get('/api/articles/1')
         .expect(200)
         .then((res) => {
           expect(res.body.article[0]).to.be.an('object');
+          expect(res.body.article[0].article_id).to.equal(1);
           expect(res.body.article[0]).to.contain.keys('article_id', 'title', 'body', 'created_at', 'topic', 'author', 'votes', 'comment_count');
+        }));
+      it('GET status : 200 and returns an array of objects', () => request.get('/api/articles/5')
+        .expect(200)
+        .then((res) => {
+          expect(res.body.article[0]).to.be.an('object');
+          expect(res.body.article[0].article_id).to.equal(5);
+          expect(res.body.article[0]).to.contain.keys('article_id', 'title', 'body', 'created_at', 'topic', 'author', 'votes', 'comment_count');
+        }));
+      it.only('PATCH status : 200 and increments vote of article by new vote amount', () => request.patch('/api/articles/1')
+        .send({ inc_votes: 1 })
+        .expect(202)
+        .then((res) => {
+          console.log(res.body.updatedArticle);
+          expect(res.body.updatedArticle[0]).to.be.an('object');
+          expect(res.body.updatedArticle[0].votes).to.equal(101);
         }));
     });
   });

@@ -24,3 +24,11 @@ exports.fetchArticleById = article_id => connection
 
 exports.addArticle = newArticle => connection
   .insert(newArticle).into('articles').returning('*');
+
+
+exports.updateArticle = (article_id, inc_votes) => connection
+  .select('*')
+  .from('articles')
+  .where({ 'articles.article_id': article_id })
+  .increment('votes', inc_votes)
+  .returning('*');

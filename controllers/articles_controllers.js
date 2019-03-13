@@ -1,4 +1,6 @@
-const { fetchAllArticles, fetchArticleById, addArticle } = require('../models/articles_models');
+const {
+  fetchAllArticles, fetchArticleById, addArticle, updateArticle,
+} = require('../models/articles_models');
 
 console.log('im in the articles controller');
 
@@ -46,5 +48,15 @@ exports.postArticle = (req, res, next) => {
   addArticle(foramttedArticle)
     .then(([article]) => {
       res.status(201).send({ article });
+    });
+};
+
+exports.patchArticleById = (req, res, next) => {
+  const { article_id } = req.params;
+  const { inc_votes } = req.body;
+
+  updateArticle(article_id, inc_votes)
+    .then((updatedArticle) => {
+      res.status(202).send({ updatedArticle });
     });
 };
