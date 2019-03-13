@@ -32,3 +32,9 @@ exports.updateArticle = (article_id, inc_votes) => connection
   .where({ 'articles.article_id': article_id })
   .increment('votes', inc_votes)
   .returning('*');
+
+exports.removeArticle = article_id => connection
+  .select('*')
+  .from('articles')
+  .where({ 'articles.article_id': article_id })
+  .del();

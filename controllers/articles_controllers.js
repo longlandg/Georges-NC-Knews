@@ -1,5 +1,5 @@
 const {
-  fetchAllArticles, fetchArticleById, addArticle, updateArticle,
+  fetchAllArticles, removeArticle, fetchArticleById, addArticle, updateArticle,
 } = require('../models/articles_models');
 
 console.log('im in the articles controller');
@@ -58,5 +58,13 @@ exports.patchArticleById = (req, res, next) => {
   updateArticle(article_id, inc_votes)
     .then((updatedArticle) => {
       res.status(202).send({ updatedArticle });
+    });
+};
+
+exports.deleteArticleById = (req, res, next) => {
+  const { article_id } = req.params;
+  removeArticle(article_id)
+    .then(() => {
+      res.status(204).send({});
     });
 };

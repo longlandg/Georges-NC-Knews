@@ -104,13 +104,20 @@ describe('/', () => {
           expect(res.body.article[0].article_id).to.equal(5);
           expect(res.body.article[0]).to.contain.keys('article_id', 'title', 'body', 'created_at', 'topic', 'author', 'votes', 'comment_count');
         }));
-      it.only('PATCH status : 200 and increments vote of article by new vote amount', () => request.patch('/api/articles/1')
+      it('PATCH status : 200 and increments vote of article by new vote amount', () => request.patch('/api/articles/1')
         .send({ inc_votes: 1 })
         .expect(202)
         .then((res) => {
           console.log(res.body.updatedArticle);
           expect(res.body.updatedArticle[0]).to.be.an('object');
           expect(res.body.updatedArticle[0].votes).to.equal(101);
+        }));
+      it.only('DELETE status : 204 and return message of ', () => request.delete('/api/articles/1')
+
+        .expect(204)
+        .then((res) => {
+          expect(res.body).to.eql({});
+          console.log(res.body);
         }));
     });
   });
