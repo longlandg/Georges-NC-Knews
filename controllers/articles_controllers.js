@@ -1,4 +1,4 @@
-const { fetchAllArticles, addArticle } = require('../models/articles_models');
+const { fetchAllArticles, fetchArticleById, addArticle } = require('../models/articles_models');
 
 console.log('im in the articles controller');
 
@@ -25,6 +25,16 @@ exports.getAllArticles = (req, res, next) => {
     });
 };
 
+exports.getArticleById = (req, res, next) => {
+  const { article_id } = req.params;
+
+  fetchArticleById(article_id)
+    .then((article) => {
+      res.status(200).send({ article });
+    });
+};
+
+
 exports.postArticle = (req, res, next) => {
   const articleToPost = req.body;
   const foramttedArticle = {
@@ -33,11 +43,8 @@ exports.postArticle = (req, res, next) => {
     topic: articleToPost.topic,
     author: articleToPost.username,
   };
-
-  console.log('this is the reqbody', req.body);
   addArticle(foramttedArticle)
     .then(([article]) => {
-      console.log('this is the article', article);
       res.status(201).send({ article });
     });
 };

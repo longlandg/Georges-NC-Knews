@@ -14,10 +14,13 @@ exports.fetchAllArticles = (authorCondition, sort_by,
   .count('comments.comments_id as comment_count')
   .orderBy(sort_by || 'articles.created_at', order || 'desc');
 
+exports.fetchArticleById = article_id => connection
+  .select('articles.article_id', 'articles.title', 'articles.body', 'articles.votes', 'articles.topic', 'articles.author', 'articles.created_at')
+  .from('articles')
+  .where({ 'articles.article_id': article_id })
+  .leftJoin('comments', 'articles.article_id', '=', 'comments.article_id')
+  .groupBy('articles.article_id')
+  .count('comments.comments_id as comment_count');
 
 exports.addArticle = newArticle => connection
   .insert(newArticle).into('articles').returning('*');
-
-
-// exports.addArticle = newArticle => connection
-// .insert('title', 'body', 'topic', 'username' ,).into('articles').returning('*');

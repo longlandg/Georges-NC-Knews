@@ -87,11 +87,18 @@ describe('/', () => {
           .send(articleToPost)
           .expect(201)
           .then((res) => {
-            console.log(res.body);
             expect(res.body.article).to.be.an('object');
             expect(res.body.article).to.contain.keys('article_id', 'title', 'body', 'created_at', 'topic', 'author', 'votes');
           });
       });
+    });
+    describe.only('/articles/:article_id', () => {
+      it('GET status : 200 and returns an array of objects', () => request.get('/api/articles/1')
+        .expect(200)
+        .then((res) => {
+          expect(res.body.article[0]).to.be.an('object');
+          expect(res.body.article[0]).to.contain.keys('article_id', 'title', 'body', 'created_at', 'topic', 'author', 'votes', 'comment_count');
+        }));
     });
   });
 });
