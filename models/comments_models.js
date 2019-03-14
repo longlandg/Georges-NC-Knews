@@ -8,6 +8,3 @@ exports.updateComment = (comments_id, inc_votes) => connection
   .where({ 'comments.comments_id': comments_id })
   .increment('votes', inc_votes)
   .returning('*');
-
-
-

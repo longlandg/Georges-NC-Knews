@@ -142,15 +142,14 @@ describe('/', () => {
             expect(Object.keys(res.body)[0]).to.equal('comment');
           });
       });
-    
     });
     describe.only('/comments/:comments_id', () => {
       it('PATCH status : 200 and increments vote of a comment by new vote amount', () => request.patch('/api/comments/5')
         .send({ inc_votes: 1 })
         .expect(202)
         .then((res) => {
-          expect(res.body.updatedComments).to.be.an('object');
-          expect(res.body.updatedcomments.votes).to.equal(1);
+          expect(res.body.comment).to.be.an('array');
+          expect(res.body.comment[0].votes).to.equal(1);
         }));
     });
   });
