@@ -143,7 +143,7 @@ describe('/', () => {
           });
       });
     });
-    describe.only('/comments/:comments_id', () => {
+    describe('/comments/:comments_id', () => {
       it('PATCH status : 200 and increments vote of a comment by new vote amount', () => request.patch('/api/comments/5')
         .send({ inc_votes: 1 })
         .expect(202)
@@ -152,11 +152,20 @@ describe('/', () => {
           expect(res.body.comment.votes).to.equal(1);
           expect(res.body.comment).to.contain.keys('comments_id', 'article_id', 'votes', 'created_at', 'author', 'body');
         }));
-      // it('DELETE status : 204 and and delete article', () => request.delete('/api/comments/5')
-      //   .expect(204)
-      //   .then((res) => {
-      //     expect(res.body).to.eql({});
-      //   }));
+      it('DELETE status : 204 and and delete article', () => request.delete('/api/comments/5')
+        .expect(204)
+        .then((res) => {
+          expect(res.body).to.eql({});
+        }));
+    });
+    describe.only('/users', () => {
+      it('GET status : 200 and returns an array of user objects', () => request.get('/api/users')
+        .expect(200)
+        .then(({ body }) => {
+          console.log(body);
+          expect(body.users.length).to.equal(3);
+          expect(body.users[0]).contain.keys('username', 'avatar_url', 'name');
+        }));
     });
   });
 });

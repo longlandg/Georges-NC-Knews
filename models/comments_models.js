@@ -9,6 +9,7 @@ exports.updateComment = (comments_id, inc_votes) => connection
   .increment('votes', inc_votes)
   .returning('*');
 
+
 exports.removeComment = comments_id => connection
   .select('*')
   .from('comments')

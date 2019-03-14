@@ -12,7 +12,7 @@ exports.patchComments = (req, res, next) => {
 };
 
 
-exports.deleteCommentById = (req, res, next) => {
+exports.deleteCommentsById = (req, res, next) => {
   const { comments_id } = req.params;
   removeComment(comments_id)
     .then(() => {
