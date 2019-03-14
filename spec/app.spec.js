@@ -10,6 +10,16 @@ const request = supertest(app);
 describe('/', () => {
   beforeEach(() => connection.seed.run());
   after(() => connection.destroy());
+
+  describe('/badroute', () => {
+    it('statuscode: 404 with appropriate message', () => request.get('/badroute')
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).to.equal('route not found');
+      }));
+  });
+
+
   describe('/api', () => {
     describe('/topics', () => {
       it('GET status : 200 and returns an array of objects', () => request.get('/api/topics')
@@ -30,19 +40,13 @@ describe('/', () => {
             expect(body).to.be.a('object');
           });
       });
+      it('BAD METHOD statuscode:405', () => request.patch('/api/topics')
+        .expect(405)
+        .then(({ body }) => {
+          expect(body.msg).to.equal('patch / put / delete method not allowed');
+        }));
     });
-    xdescribe('/topics', () => {
-      it('POST status : 900 and an error object with key of msg', () => {
-        const topicToPost = { slug: 'mitch', description: 'The tastiest of all the fruits' };
-        return request.post('/api/topics').send(topicToPost)
-          .expect(422)
-          .then(({ body }) => {
-            console.log({ body });
-            expect(body).contain.key('code');
-            expect(body.code).to.eql('2305');
-          });
-      });
-    });
+
     describe('/articles', () => {
       it('GET status : 200 and returns an array of objects', () => request.get('/api/articles')
         .expect(200)
@@ -170,12 +174,11 @@ describe('/', () => {
         .send(userToPost)
         .expect(201)
         .then(({ body }) => {
-          console.log(body);
           expect(body.user).to.eql(userToPost);
           expect(body.user).contain.keys('username', 'avatar_url', 'name');
         }));
     });
-    describe.only('/users/:username', () => {
+    describe('/users/:username', () => {
       it('GET status : 200 returns an user object', () => request.get('/api/users/icellusedkars')
         .expect(200)
         .then(({ body }) => {

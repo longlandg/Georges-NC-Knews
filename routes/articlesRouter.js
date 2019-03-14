@@ -2,15 +2,20 @@ const articlesRouter = require('express').Router();
 const {
   getAllArticles, getAllCommentsByArticleId, postCommentOnArticle, deleteArticleById, postArticle, getArticleById, patchArticleById,
 } = require('../controllers/articles_controllers');
+const { handle405 } = require('../errors/index');
 
-articlesRouter.get('/', getAllArticles);
-articlesRouter.post('/', postArticle);
+articlesRouter.route('/')
+  .get(getAllArticles)
+  .post(postArticle)
+  .all(handle405);
 
-articlesRouter.get('/:article_id', getArticleById);
-articlesRouter.patch('/:article_id', patchArticleById);
-articlesRouter.delete('/:article_id', deleteArticleById);
+articlesRouter.route('/:article_id')
+  .get(getArticleById)
+  .patch(patchArticleById)
+  .delete(deleteArticleById);
 
-articlesRouter.get('/:article_id/comments', getAllCommentsByArticleId);
-articlesRouter.post('/:article_id/comments', postCommentOnArticle);
+articlesRouter.route('/:article_id/comments')
+  .get(getAllCommentsByArticleId)
+  .post(postCommentOnArticle);
 
 module.exports = articlesRouter;
