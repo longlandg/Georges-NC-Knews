@@ -2,15 +2,15 @@ const {
   fetchAllArticles, addComment, fetchCommentsbyArticleId, removeArticle, fetchArticleById, addArticle, updateArticle,
 } = require('../models/articles_models');
 
+let georgeErrors = {};
 console.log('im in the articles controller');
 
 exports.getAllArticles = (req, res, next) => {
-  const { sort_by, order } = req.query;
+  console.log(req.query);
+  const { sort_by, order = 'desc' } = req.query;
   let authorCondition = {};
   let topicCondition = {};
   let createdCondition = {};
-
-  
 
   Object.keys(req.query).forEach((key) => {
     if (key === 'author') {
@@ -21,17 +21,18 @@ exports.getAllArticles = (req, res, next) => {
       createdCondition = { 'articles.created_at': req.query[key] };
     }
   });
-
-
-  fetchAllArticles(authorCondition, sort_by, order, topicCondition, createdCondition)
-    .then((articles) => {
-     
-      res.status(200).send({ articles });
-    })
-    .catch((err) => {
-      console.log(err);
-      next(err);
-    });
+  if (order !== 'asc' && order !== 'desc') {
+    georgeErrors = { code: 13 };
+    next(georgeErrors);
+  } else {
+    fetchAllArticles(authorCondition, sort_by, order, topicCondition, createdCondition)
+      .then((articles) => {
+        res.status(200).send({ articles });
+      })
+      .catch((err) => {
+        next(err);
+      });
+  }
 };
 
 exports.getArticleById = (req, res, next) => {
@@ -52,6 +53,8 @@ exports.postArticle = (req, res, next) => {
     topic: articleToPost.topic,
     author: articleToPost.username,
   };
+  console.log(res.body);
+
   addArticle(foramttedArticle)
     .then(([article]) => {
       res.status(201).send({ article });
