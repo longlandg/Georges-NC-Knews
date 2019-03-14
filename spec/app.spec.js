@@ -69,10 +69,14 @@ describe('/', () => {
       it('BAD QUERY statuscode:400', () => request.get('/api/articles?sort_by=abc')
         .expect(400)
         .then(({ body }) => {
-          console.log(body);
           expect(body.msg).to.equal('BAD REQUEST column does not exist');
         }));
-
+      it('BAD fffQUERY statuscode:400', () => request.get('/api/articles?order=abddddddddddbc')
+        .expect(401)
+        .then(({ body }) => {
+          console.log('ffff',body);
+          expect(body.msg).to.equal('BAD REQUEST columnorder does not exist');
+        }));
 
       it('GET status : 200 and returns an array of objects', () => request.get('/api/articles')
         .expect(200)

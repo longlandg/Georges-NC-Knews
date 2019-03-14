@@ -10,6 +10,8 @@ exports.getAllArticles = (req, res, next) => {
   let topicCondition = {};
   let createdCondition = {};
 
+  
+
   Object.keys(req.query).forEach((key) => {
     if (key === 'author') {
       authorCondition = { 'articles.author': req.query[key] };
@@ -23,6 +25,7 @@ exports.getAllArticles = (req, res, next) => {
 
   fetchAllArticles(authorCondition, sort_by, order, topicCondition, createdCondition)
     .then((articles) => {
+     
       res.status(200).send({ articles });
     })
     .catch((err) => {
