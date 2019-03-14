@@ -92,6 +92,11 @@ describe('/', () => {
             expect(res.body.article).to.contain.keys('article_id', 'title', 'body', 'created_at', 'topic', 'author', 'votes');
           });
       });
+      it('BAD METHOD statuscode:405', () => request.patch('/api/articles')
+        .expect(405)
+        .then(({ body }) => {
+          expect(body.msg).to.equal('patch / put / delete method not allowed');
+        }));
     });
     describe('/articles/:article_id', () => {
       it('GET status : 200 and returns an array of objects', () => request.get('/api/articles/1')
@@ -176,6 +181,11 @@ describe('/', () => {
         .then(({ body }) => {
           expect(body.user).to.eql(userToPost);
           expect(body.user).contain.keys('username', 'avatar_url', 'name');
+        }));
+      it('BAD METHOD statuscode:405', () => request.patch('/api/users')
+        .expect(405)
+        .then(({ body }) => {
+          expect(body.msg).to.equal('patch / put / delete method not allowed');
         }));
     });
     describe('/users/:username', () => {
