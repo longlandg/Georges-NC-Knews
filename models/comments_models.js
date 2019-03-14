@@ -8,3 +8,9 @@ exports.updateComment = (comments_id, inc_votes) => connection
   .where({ 'comments.comments_id': comments_id })
   .increment('votes', inc_votes)
   .returning('*');
+
+exports.removeComment = comments_id => connection
+  .select('*')
+  .from('comments')
+  .where({ 'comments.comments_id': comments_id })
+  .del();

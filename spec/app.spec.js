@@ -111,7 +111,7 @@ describe('/', () => {
           expect(res.body.updatedArticle).to.be.an('object');
           expect(res.body.updatedArticle.votes).to.equal(101);
         }));
-      it('DELETE status : 204 and return message of ', () => request.delete('/api/articles/1')
+      it('DELETE status : 204 and delete article', () => request.delete('/api/articles/1')
 
         .expect(204)
         .then((res) => {
@@ -148,9 +148,15 @@ describe('/', () => {
         .send({ inc_votes: 1 })
         .expect(202)
         .then((res) => {
-          expect(res.body.comment).to.be.an('array');
-          expect(res.body.comment[0].votes).to.equal(1);
+          expect(res.body.comment).to.be.an('object');
+          expect(res.body.comment.votes).to.equal(1);
+          expect(res.body.comment).to.contain.keys('comments_id', 'article_id', 'votes', 'created_at', 'author', 'body');
         }));
+      // it('DELETE status : 204 and and delete article', () => request.delete('/api/comments/5')
+      //   .expect(204)
+      //   .then((res) => {
+      //     expect(res.body).to.eql({});
+      //   }));
     });
   });
 });
