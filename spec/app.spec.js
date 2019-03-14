@@ -158,7 +158,7 @@ describe('/', () => {
           expect(res.body).to.eql({});
         }));
     });
-    describe.only('/users', () => {
+    describe('/users', () => {
       const userToPost = { username: 'george2000', avatar_url: 'https://avatars2.githubusercontent.com/u/24394918?s=400&v=6', name: 'george' };
       it('GET status : 200 and returns an array of user objects', () => request.get('/api/users')
         .expect(200)
@@ -172,6 +172,13 @@ describe('/', () => {
         .then(({ body }) => {
           console.log(body);
           expect(body.user).to.eql(userToPost);
+          expect(body.user).contain.keys('username', 'avatar_url', 'name');
+        }));
+    });
+    describe.only('/users/:username', () => {
+      it('GET status : 200 returns an user object', () => request.get('/api/users/icellusedkars')
+        .expect(200)
+        .then(({ body }) => {
           expect(body.user).contain.keys('username', 'avatar_url', 'name');
         }));
     });

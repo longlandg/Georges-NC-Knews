@@ -1,4 +1,4 @@
-const { fetchAllUsers, addUser } = require('../models/users_models');
+const { fetchAllUsers, addUser, fetchUser } = require('../models/users_models');
 
 console.log('im in the users controller');
 
@@ -15,5 +15,12 @@ exports.postUser = (req, res, next) => {
     .then(([user]) => {
     //   console.log(user)
       res.status(201).send({ user });
+    });
+};
+exports.getUser = (req, res, next) => {
+  const username = req.params;
+  fetchUser(username)
+    .then(([user]) => {
+      res.status(200).send({ user });
     });
 };
