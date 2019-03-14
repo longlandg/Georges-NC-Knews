@@ -24,6 +24,10 @@ exports.getAllArticles = (req, res, next) => {
   fetchAllArticles(authorCondition, sort_by, order, topicCondition, createdCondition)
     .then((articles) => {
       res.status(200).send({ articles });
+    })
+    .catch((err) => {
+      console.log(err);
+      next(err);
     });
 };
 

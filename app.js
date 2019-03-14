@@ -4,6 +4,8 @@ const app = express();
 const bodyparser = require('body-parser');
 const apiRouter = require('./routes/apiRouter.js');
 
+const { handle400 } = require('./errors/index');
+
 app.use(bodyparser.json());
 app.use('/api', apiRouter);
 
@@ -15,6 +17,8 @@ app.use('/api', apiRouter);
 app.all('/*', (req, res, next) => {
   res.status(404).send({ msg: 'route not found' });
 });
+app.use(handle400);
+
 
 app.use((err, req, res, next) => {
   console.log(err);

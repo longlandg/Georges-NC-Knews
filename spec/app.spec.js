@@ -37,7 +37,25 @@ describe('/', () => {
           .then(({ body }) => {
             expect(body.topic).contain.keys('slug', 'description');
             expect(body.topic).to.eql(topicToPost);
-            expect(body).to.be.a('object');
+            expect(body).to.be.an('object');
+          });
+      });
+      it('BAD REQUEST statuscode:400, when passed a malformed body', () => {
+        const badRequestPost = { description: 'The tastiest of all the fruits' };
+        return request.post('/api/topics')
+          .send(badRequestPost)
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).to.equal('BAD REQUEST information required');
+          });
+      });
+      it('BAD REQUEST statuscode:400, when passed a malformed body', () => {
+        const badRequestPost = { slug: 'mitch', description: 'The tastiest of all the fruits' };
+        return request.post('/api/topics')
+          .send(badRequestPost)
+          .expect(422)
+          .then(({ body }) => {
+            expect(body.msg).to.equal('BAD REQUEST duplicate key value violates unique constraint "topics_pkey"');
           });
       });
       it('BAD METHOD statuscode:405', () => request.patch('/api/topics')
@@ -48,6 +66,14 @@ describe('/', () => {
     });
 
     describe('/articles', () => {
+      it('BAD QUERY statuscode:400', () => request.get('/api/articles?sort_by=abc')
+        .expect(400)
+        .then(({ body }) => {
+          console.log(body);
+          expect(body.msg).to.equal('BAD REQUEST column does not exist');
+        }));
+
+
       it('GET status : 200 and returns an array of objects', () => request.get('/api/articles')
         .expect(200)
         .then((res) => {
