@@ -6,7 +6,6 @@ let georgeErrors = {};
 console.log('im in the articles controller');
 
 exports.getAllArticles = (req, res, next) => {
-  console.log(req.query);
   const { sort_by, order = 'desc' } = req.query;
   let authorCondition = {};
   let topicCondition = {};
@@ -31,7 +30,7 @@ exports.getAllArticles = (req, res, next) => {
       })
       .catch((err) => {
         next(err);
-      });
+         });
   }
 };
 
@@ -41,6 +40,9 @@ exports.getArticleById = (req, res, next) => {
   fetchArticleById(article_id)
     .then((article) => {
       res.status(200).send({ article });
+    })
+    .catch((err) => {
+      next(err);
     });
 };
 
@@ -53,11 +55,14 @@ exports.postArticle = (req, res, next) => {
     topic: articleToPost.topic,
     author: articleToPost.username,
   };
-  console.log(res.body);
+
 
   addArticle(foramttedArticle)
     .then(([article]) => {
       res.status(201).send({ article });
+    })
+    .catch((err) => {
+      next(err);
     });
 };
 
@@ -86,6 +91,10 @@ exports.getAllCommentsByArticleId = (req, res, next) => {
   fetchCommentsbyArticleId(article_id, sort_by, order)
     .then((comments) => {
       res.status(200).send({ comments });
+    })
+    .catch((err) => {
+      next(err);
+      
     });
 };
 

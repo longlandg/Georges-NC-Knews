@@ -131,15 +131,40 @@ describe('/', () => {
         const badArticleToPost = {
           body: 'something something hatty catty', topic: 'cats', username: 'rogersop',
         };
-        return request.post('/api/topics')
+        return request.post('/api/articles')
           .send(badArticleToPost)
           .expect(400)
           .then(({ body }) => {
-            expect(body.msg).to.equal('BAD REQUEST column does not exist');
+            expect(body.msg).to.equal('BAD REQUEST information required');
+          });
+      });
+      it('BAD REQUEST statuscode:400, when when posting article where topic or username doesnt exist', () => {
+        const badArticleToPost = {
+          body: 'something something hatty catty', topic: 'cats',
+        };
+        return request.post('/api/articles')
+          .send(badArticleToPost)
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).to.equal('BAD REQUEST information required');
           });
       });
     });
     describe('/articles/:article_id', () => {
+      it('BAD REQUEST statuscode:400, when passed a bad query', () => request.get('/api/articles/dog')
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).to.equal('BAD REQUEST invalid input');
+        }));
+      it('UNPROCESSED ENTITY statuscode:422', () => {
+        // do i need this return?
+        return request.get('/api/articles?article_id=999999')
+        .expect(422)
+        .then(({ body }) => {
+          expect(body.msg).to.equal('UNPROCESSED ENTITY invalid input');
+        })
+      });  
+
       it('GET status : 200 and returns an array of objects', () => request.get('/api/articles/1')
         .expect(200)
         .then((res) => {
