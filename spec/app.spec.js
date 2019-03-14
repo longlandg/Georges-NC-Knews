@@ -159,12 +159,20 @@ describe('/', () => {
         }));
     });
     describe.only('/users', () => {
+      const userToPost = { username: 'george2000', avatar_url: 'https://avatars2.githubusercontent.com/u/24394918?s=400&v=6', name: 'george' };
       it('GET status : 200 and returns an array of user objects', () => request.get('/api/users')
         .expect(200)
         .then(({ body }) => {
-          console.log(body);
           expect(body.users.length).to.equal(3);
           expect(body.users[0]).contain.keys('username', 'avatar_url', 'name');
+        }));
+      it('POST status : 201 and returns an array with a single user object', () => request.post('/api/users')
+        .send(userToPost)
+        .expect(201)
+        .then(({ body }) => {
+          console.log(body);
+          expect(body.user).to.eql(userToPost);
+          expect(body.user).contain.keys('username', 'avatar_url', 'name');
         }));
     });
   });

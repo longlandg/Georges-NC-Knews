@@ -15,3 +15,6 @@ exports.removeComment = comments_id => connection
   .from('comments')
   .where({ 'comments.comments_id': comments_id })
   .del();
+
+
+exports.addUser = newUser => connection.insert(newUser).into('users').returning('*');
