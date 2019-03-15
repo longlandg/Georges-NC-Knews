@@ -30,20 +30,28 @@ exports.getAllArticles = (req, res, next) => {
       })
       .catch((err) => {
         next(err);
-         });
+      });
   }
 };
 
 exports.getArticleById = (req, res, next) => {
   const { article_id } = req.params;
-
-  fetchArticleById(article_id)
-    .then((article) => {
-      res.status(200).send({ article });
-    })
-    .catch((err) => {
-      next(err);
-    });
+  console.log('this is the article', article_id);
+  if (typeof (Number(article_id)) !== 'number') {
+    next(res.status(400).send({ msg: 'BAD REQUEST invalid input' }));
+  } else {
+    fetchArticleById(article_id)
+      .then((article) => {
+        if (article.length === 0) {
+          (next(res.status(404).send({ msg: 'BAD REQUEST input does not exist' })));
+        } else {
+          res.status(200).send({ article });
+        }
+      })
+      .catch((err) => {
+        next(err);
+      });
+  }
 };
 
 
@@ -94,7 +102,6 @@ exports.getAllCommentsByArticleId = (req, res, next) => {
     })
     .catch((err) => {
       next(err);
-      
     });
 };
 

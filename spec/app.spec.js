@@ -157,22 +157,21 @@ describe('/', () => {
           expect(body.msg).to.equal('BAD REQUEST invalid input');
         }));
       it('UNPROCESSED ENTITY statuscode:422', () => {
-        // do i need this return?
-        return request.get('/api/articles?article_id=999999')
-        .expect(422)
-        .then(({ body }) => {
-          expect(body.msg).to.equal('UNPROCESSED ENTITY invalid input');
-        })
-      });  
+        request.get('/api/articles/999999')
+          .expect(404)
+          .then(({ body }) => {
+            expect(body.msg).to.equal('BAD REQUEST input does not exist');
+          });
+      });
 
-      it('GET status : 200 and returns an array of objects', () => request.get('/api/articles/1')
+      it('GET status : 200 and returns an array of 1objects', () => request.get('/api/articles/1')
         .expect(200)
         .then((res) => {
           expect(res.body.article[0]).to.be.an('object');
           expect(res.body.article[0].article_id).to.equal(1);
           expect(res.body.article[0]).to.contain.keys('article_id', 'title', 'body', 'created_at', 'topic', 'author', 'votes', 'comment_count');
         }));
-      it('GET status : 200 and returns an array of objects', () => request.get('/api/articles/5')
+      it('GET status : 200 and returns an array of 2objects', () => request.get('/api/articles/5')
         .expect(200)
         .then((res) => {
           expect(res.body.article[0]).to.be.an('object');

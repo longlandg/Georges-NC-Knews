@@ -12,7 +12,8 @@ articlesRouter.route('/')
 articlesRouter.route('/:article_id')
   .get(getArticleById)
   .patch(patchArticleById)
-  .delete(deleteArticleById);
+  .delete(deleteArticleById)
+  .all(handle405);
 
 articlesRouter.route('/:article_id/comments')
   .get(getAllCommentsByArticleId)
