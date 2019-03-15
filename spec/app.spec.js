@@ -226,6 +226,24 @@ describe('/', () => {
         }));
     });
     describe('/articles/:article_id/comments', () => {
+      it('GET status : 400 and returns an array of comments for a given ID', () => request.get('/api/articles/gary/comments')
+        .expect(400)
+        .then(({ body }) => {
+          console.log(body);
+          expect(body.msg).to.equal('BAD REQUEST article_id type is invalid');
+        }));
+
+      it('POST status : 400 and returns an adfgdfments for a given ID', () => {
+        const commentToPost = { username: 'icellusedkars', body: 'words cant explain how brilliant this article' };
+        request.post('/api/articles/500/comments').send(commentToPost)
+          .expect(400)
+          .then(({ body }) => {
+            console.log(body);
+            expect(body.msg).to.equal('BAD REQUEST article_id is invalid');
+          });
+      });
+
+
       it('GET status : 200 and returns an array of comments for a given ID', () => request.get('/api/articles/6/comments')
         .expect(200)
         .then((res) => {
@@ -251,6 +269,32 @@ describe('/', () => {
       });
     });
     describe('/comments/:comments_id', () => {
+      it('BADPATCH status : 400 when given no key', () => request.patch('/api/articles/5')
+        .send({})
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).to.equal('BAD REQUEST missing keys');
+        }));
+
+
+      it('BAD REQUEST statuscode:400, when trying to delete where article id does not exist', () => {
+        request.delete('/api/comments/500')
+
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).to.equal('BAD REQUEST article_id does not exist');
+          });
+      });
+      it('BAD REQUEST statuscode:400, when trying to delete where article id is not a number', () => {
+        request.delete('/api/comments/gary')
+
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).to.equal('BAD REQUEST article_id type is invalid');
+          });
+      });
+
+
       it('PATCH status : 200 and increments vote of a comment by new vote amount', () => request.patch('/api/comments/5')
         .send({ inc_votes: 1 })
         .expect(202)
@@ -267,6 +311,14 @@ describe('/', () => {
     });
     describe('/users', () => {
       const userToPost = { username: 'george2000', avatar_url: 'https://avatars2.githubusercontent.com/u/24394918?s=400&v=6', name: 'george' };
+     
+     
+     
+     
+     
+     
+     
+     
       it('GET status : 200 and returns an array of user objects', () => request.get('/api/users')
         .expect(200)
         .then(({ body }) => {

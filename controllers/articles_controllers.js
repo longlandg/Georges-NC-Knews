@@ -4,33 +4,34 @@ const {
 
 let georgeErrors = {};
 console.log('im in the articles controller');
+// expect(res.body.articles[0]).contain.keys('author', 'title', 'article_id', 'topic', 'created_at', 'votes', 'comment_count');
+
 
 exports.getAllArticles = (req, res, next) => {
   const { sort_by, order = 'desc' } = req.query;
-  let authorCondition = {};
-  let topicCondition = {};
-  let createdCondition = {};
+  let conditions = {};
 
+  // console.log(sort_by)
+  // console.log(order)
   Object.keys(req.query).forEach((key) => {
+    // console.log(res.body)
     if (key === 'author') {
-      authorCondition = { 'articles.author': req.query[key] };
+      conditions = { 'articles.author': req.query[key] };
     } else if (key === 'topic') {
-      topicCondition = { 'articles.topic': req.query[key] };
+      conditions = { 'articles.topic': req.query[key] };
     } else if (key === 'created') {
-      createdCondition = { 'articles.created_at': req.query[key] };
+      conditions = { 'articles.created_at': req.query[key] };
     }
   });
   if (order !== 'asc' && order !== 'desc') {
     georgeErrors = { code: 13 };
     next(georgeErrors);
   } else {
-    fetchAllArticles(authorCondition, sort_by, order, topicCondition, createdCondition)
+    fetchAllArticles(conditions, sort_by, order)
       .then((articles) => {
         res.status(200).send({ articles });
       })
-      .catch((err) => {
-        next(err);
-      });
+      .catch(next);
   }
 };
 
@@ -48,9 +49,7 @@ exports.getArticleById = (req, res, next) => {
           res.status(200).send({ article });
         }
       })
-      .catch((err) => {
-        next(err);
-      });
+      .catch(next);
   }
 };
 
@@ -69,9 +68,7 @@ exports.postArticle = (req, res, next) => {
     .then(([article]) => {
       res.status(201).send({ article });
     })
-    .catch((err) => {
-      next(err);
-    });
+    .catch(next);
 };
 
 exports.patchArticleById = (req, res, next) => {
@@ -88,9 +85,7 @@ exports.patchArticleById = (req, res, next) => {
       .then(([updatedArticle]) => {
         res.status(202).send({ updatedArticle });
       })
-      .catch((err) => {
-        next(err);
-      });
+      .catch(next);
   }
 };
 
@@ -108,38 +103,40 @@ exports.deleteArticleById = (req, res, next) => {
           res.status(204).send({});
         }
       })
-      .catch((err) => {
-        next(err);
-      });
+      .catch(next);
   }
 };
 
 exports.getAllCommentsByArticleId = (req, res, next) => {
   const { article_id } = req.params;
   const { sort_by, order } = req.query;
-
-  fetchCommentsbyArticleId(article_id, sort_by, order)
-    .then((comments) => {
-      res.status(200).send({ comments });
-    })
-    .catch((err) => {
-      next(err);
-    });
+  const int = Number(article_id);
+  if (isNaN(int)) {
+    (next(res.status(400).send({ msg: 'BAD REQUEST article_id type is invalid' })));
+  } else {
+    fetchCommentsbyArticleId(article_id, sort_by, order)
+      .then((comments) => {
+        res.status(200).send({ comments });
+      })
+      .catch(next);
+  }
 };
 
 
 exports.postCommentOnArticle = (req, res, next) => {
   const commentToPost = req.body;
   const { article_id } = req.params;
-
+  const int = Number(article_id);
 
   const formattedPost = {
     author: commentToPost.username,
     body: commentToPost.body,
     article_id,
   };
+  // error handling needed here
   addComment(formattedPost)
     .then(([comment]) => {
       res.status(201).send({ comment });
-    });
+    })
+    .catch(next);
 };
