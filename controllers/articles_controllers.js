@@ -77,12 +77,21 @@ exports.postArticle = (req, res, next) => {
 exports.patchArticleById = (req, res, next) => {
   const { article_id } = req.params;
   const { inc_votes } = req.body;
-
-  updateArticle(article_id, inc_votes)
-    .then(([updatedArticle]) => {
-      res.status(202).send({ updatedArticle });
-    });
+  if ((Number(inc_votes)) === undefined) {
+    (next(res.status(400).send({ msg: 'BAD REQUEST missing keys' })));
+  } else if (isNaN(Number(inc_votes))) {
+    (next(res.status(400).send({ msg: 'BAD REQUEST invalid value' })));
+  } else {
+    updateArticle(article_id, inc_votes)
+      .then(([updatedArticle]) => {
+        res.status(202).send({ updatedArticle });
+      })
+      .catch((err) => {
+        next(err);
+      });
+  }
 };
+
 
 exports.deleteArticleById = (req, res, next) => {
   const { article_id } = req.params;

@@ -163,6 +163,23 @@ describe('/', () => {
             expect(body.msg).to.equal('BAD REQUEST input does not exist');
           });
       });
+      it('BAD REQUEST statuscode:400, when trying to patch with no body', () => {
+        request.patch('/api/articles/5')
+          .send({})
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).to.equal('BAD REQUEST missing keys');
+          });
+      });
+      it.only('BAD REQUEST statuscode:400, when trying to patch with bad value', () => {
+        request.patch('/api/articles/5')
+          .send({ inc_votes: 'cat' })
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).to.equal('BAD REQUEST invalid value');
+          });
+      });
+
 
       it('GET status : 200 and returns an array of 1objects', () => request.get('/api/articles/1')
         .expect(200)
