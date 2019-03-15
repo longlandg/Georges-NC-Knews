@@ -311,14 +311,8 @@ describe('/', () => {
     });
     describe('/users', () => {
       const userToPost = { username: 'george2000', avatar_url: 'https://avatars2.githubusercontent.com/u/24394918?s=400&v=6', name: 'george' };
-     
-     
-     
-     
-     
-     
-     
-     
+
+
       it('GET status : 200 and returns an array of user objects', () => request.get('/api/users')
         .expect(200)
         .then(({ body }) => {

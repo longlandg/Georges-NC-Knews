@@ -93,6 +93,7 @@ exports.patchArticleById = (req, res, next) => {
 exports.deleteArticleById = (req, res, next) => {
   const { article_id } = req.params;
   if (isNaN(Number(article_id))) {
+    next
     (next(res.status(400).send({ msg: 'BAD REQUEST article_id type is invalid' })));
   } else {
     removeArticle(article_id)
