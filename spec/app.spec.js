@@ -171,12 +171,12 @@ describe('/', () => {
             expect(body.msg).to.equal('BAD REQUEST missing keys');
           });
       });
-      it.only('BAD REQUEST statuscode:400, when trying to patch with bad value', () => {
+      it.only('BAD REQUEST statuscode:400, when trying to patch withadditional keys', () => {
         request.patch('/api/articles/5')
-          .send({ inc_votes: 'cat' })
+          .send({ inc_votes: 'cat', name: 'Mitch' })
           .expect(400)
           .then(({ body }) => {
-            expect(body.msg).to.equal('BAD REQUEST invalid value');
+            expect(body.msg).to.equal('BAD REQUEST too many keys');
           });
       });
 

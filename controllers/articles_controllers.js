@@ -79,6 +79,8 @@ exports.patchArticleById = (req, res, next) => {
   const { inc_votes } = req.body;
   if ((Number(inc_votes)) === undefined) {
     (next(res.status(400).send({ msg: 'BAD REQUEST missing keys' })));
+  } else if (Object.keys(req.body).length !== 1) {
+    (next(res.status(400).send({ msg: 'BAD REQUEST too many keys' })));
   } else if (isNaN(Number(inc_votes))) {
     (next(res.status(400).send({ msg: 'BAD REQUEST invalid value' })));
   } else {
