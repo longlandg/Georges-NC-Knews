@@ -171,12 +171,28 @@ describe('/', () => {
             expect(body.msg).to.equal('BAD REQUEST missing keys');
           });
       });
-      it.only('BAD REQUEST statuscode:400, when trying to patch withadditional keys', () => {
+      it('BAD REQUEST statuscode:400, when trying to patch withadditional keys', () => {
         request.patch('/api/articles/5')
           .send({ inc_votes: 'cat', name: 'Mitch' })
           .expect(400)
           .then(({ body }) => {
             expect(body.msg).to.equal('BAD REQUEST too many keys');
+          });
+      });
+      it('BAD REQUEST statuscode:400, when trying to delete where article id does not exist', () => {
+        request.delete('/api/articles/500')
+
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).to.equal('BAD REQUEST article_id does not exist');
+          });
+      });
+      it('BAD REQUEST statuscode:400, when trying to delete where article id is not a number', () => {
+        request.delete('/api/articles/gary')
+
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).to.equal('BAD REQUEST article_id type is invalid');
           });
       });
 

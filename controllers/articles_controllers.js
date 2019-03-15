@@ -77,7 +77,7 @@ exports.postArticle = (req, res, next) => {
 exports.patchArticleById = (req, res, next) => {
   const { article_id } = req.params;
   const { inc_votes } = req.body;
-  if ((Number(inc_votes)) === undefined) {
+  if (inc_votes === undefined) {
     (next(res.status(400).send({ msg: 'BAD REQUEST missing keys' })));
   } else if (Object.keys(req.body).length !== 1) {
     (next(res.status(400).send({ msg: 'BAD REQUEST too many keys' })));
@@ -97,10 +97,21 @@ exports.patchArticleById = (req, res, next) => {
 
 exports.deleteArticleById = (req, res, next) => {
   const { article_id } = req.params;
-  removeArticle(article_id)
-    .then(() => {
-      res.status(204).send({});
-    });
+  if (isNaN(Number(article_id))) {
+    (next(res.status(400).send({ msg: 'BAD REQUEST article_id type is invalid' })));
+  } else {
+    removeArticle(article_id)
+      .then((delart) => {
+        if (delart === 0) {
+          (next(res.status(400).send({ msg: 'BAD REQUEST article_id does not exist' })));
+        } else {
+          res.status(204).send({});
+        }
+      })
+      .catch((err) => {
+        next(err);
+      });
+  }
 };
 
 exports.getAllCommentsByArticleId = (req, res, next) => {
