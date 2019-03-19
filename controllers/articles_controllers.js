@@ -2,19 +2,12 @@ const {
   fetchAllArticles, addComment, fetchCommentsbyArticleId, removeArticle, fetchArticleById, addArticle, updateArticle,
 } = require('../models/articles_models');
 
-let georgeErrors = {};
-console.log('im in the articles controller');
-// expect(res.body.articles[0]).contain.keys('author', 'title', 'article_id', 'topic', 'created_at', 'votes', 'comment_count');
-
+let orderError = {};
 
 exports.getAllArticles = (req, res, next) => {
   const { sort_by, order = 'desc' } = req.query;
   let conditions = {};
-
-  // console.log(sort_by)
-  // console.log(order)
   Object.keys(req.query).forEach((key) => {
-    // console.log(res.body)
     if (key === 'author') {
       conditions = { 'articles.author': req.query[key] };
     } else if (key === 'topic') {
@@ -24,8 +17,8 @@ exports.getAllArticles = (req, res, next) => {
     }
   });
   if (order !== 'asc' && order !== 'desc') {
-    georgeErrors = { code: 13 };
-    next(georgeErrors);
+    orderError = { code: 13 };
+    next(orderError);
   } else {
     fetchAllArticles(conditions, sort_by, order)
       .then((articles) => {
@@ -37,12 +30,11 @@ exports.getAllArticles = (req, res, next) => {
 
 exports.getArticleById = (req, res, next) => {
   const { article_id } = req.params;
-  console.log('this is the article', article_id);
   if (typeof (Number(article_id)) !== 'number') {
     next(res.status(400).send({ msg: 'BAD REQUEST invalid input' }));
   } else {
     fetchArticleById(article_id)
-      .then((article) => {
+      .then(([article]) => {
         if (article.length === 0) {
           (next(res.status(404).send({ msg: 'BAD REQUEST input does not exist' })));
         } else {
@@ -93,8 +85,7 @@ exports.patchArticleById = (req, res, next) => {
 exports.deleteArticleById = (req, res, next) => {
   const { article_id } = req.params;
   if (isNaN(Number(article_id))) {
-    next
-    (next(res.status(400).send({ msg: 'BAD REQUEST article_id type is invalid' })));
+    res.status(400).send({ msg: 'BAD REQUEST article_id type is invalid' });
   } else {
     removeArticle(article_id)
       .then((delart) => {
@@ -113,7 +104,7 @@ exports.getAllCommentsByArticleId = (req, res, next) => {
   const { sort_by, order } = req.query;
   const int = Number(article_id);
   if (isNaN(int)) {
-    (next(res.status(400).send({ msg: 'BAD REQUEST article_id type is invalid' })));
+    res.status(400).send({ msg: 'BAD REQUEST article_id type is invalid' });
   } else {
     fetchCommentsbyArticleId(article_id, sort_by, order)
       .then((comments) => {
@@ -134,7 +125,6 @@ exports.postCommentOnArticle = (req, res, next) => {
     body: commentToPost.body,
     article_id,
   };
-  // error handling needed here
   addComment(formattedPost)
     .then(([comment]) => {
       res.status(201).send({ comment });

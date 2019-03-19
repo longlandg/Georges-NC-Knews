@@ -8,6 +8,7 @@ usersRouter.route('/')
   .all(handle405);
 
 usersRouter.route('/:username')
-  .get(getUser);
+  .get(getUser)
+  .all(handle405);
 
 module.exports = usersRouter;

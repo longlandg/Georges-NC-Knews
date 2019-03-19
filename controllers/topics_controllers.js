@@ -1,8 +1,5 @@
 const { fetchAllTopics, addTopic } = require('../models/topics_models');
-const { georgeErrors } = require('../controllers/articles_controllers');
 
-
-console.log('im in the getAllTopics controller');
 
 exports.getAllTopics = (req, res, next) => {
   fetchAllTopics()
@@ -15,6 +12,7 @@ exports.getAllTopics = (req, res, next) => {
 
 exports.postTopic = (req, res, next) => {
   const topicToPost = req.body;
+
   addTopic(topicToPost)
     .then(([topic]) => {
       res.status(201).send({ topic });

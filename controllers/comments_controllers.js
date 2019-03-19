@@ -1,7 +1,5 @@
 const { updateComment, removeComment } = require('../models/comments_models');
 
-console.log('im in the comments controller');
-
 exports.patchComments = (req, res, next) => {
   const { comments_id } = req.params;
   const { inc_votes } = req.body;
@@ -17,12 +15,12 @@ exports.patchComments = (req, res, next) => {
 exports.deleteCommentsById = (req, res, next) => {
   const { comments_id } = req.params;
   if (isNaN(Number(comments_id))) {
-    (next(res.status(400).send({ msg: 'BAD REQUEST article_id type is invalid' })));
+    res.status(400);
   } else {
     removeComment(comments_id)
       .then((delart) => {
         if (delart === 0) {
-          (next(res.status(400).send({ msg: 'BAD REQUEST article_id does not exist' })));
+          res.status(400);
         } else {
           res.status(204).send({});
         }

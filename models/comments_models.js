@@ -1,7 +1,5 @@
 const connection = require('../db/connection');
 
-console.log('im in the comments model');
-
 exports.updateComment = (comments_id, inc_votes) => connection
   .select('*')
   .from('comments')

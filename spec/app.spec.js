@@ -21,6 +21,15 @@ describe('/', () => {
 
 
   describe('/api', () => {
+    it('statuscode: 404 with appropriate message', () => request.get('/api')
+    .expect(404)
+    .then(({ body }) => {
+      expect(body.msg).to.equal('route not found');
+    }));
+
+
+
+
     describe('/topics', () => {
       it('GET status : 200 and returns an array of objects', () => request.get('/api/topics')
         .expect(200)
@@ -42,14 +51,16 @@ describe('/', () => {
       });
       it('BAD REQUEST statuscode:400, when passed a malformed body', () => {
         const badRequestPost = { description: 'The tastiest of all the fruits' };
+
         return request.post('/api/topics')
+
           .send(badRequestPost)
           .expect(400)
           .then(({ body }) => {
             expect(body.msg).to.equal('BAD REQUEST information required');
           });
       });
-      it('BAD REQUEST statuscode:400, when passed a malformed body', () => {
+      it('BAD REQUEST statuscode:422, when hhhhhpassed a malformed body', () => {
         const badRequestPost = { slug: 'mitch', description: 'The tastiest of all the fruits' };
         return request.post('/api/topics')
           .send(badRequestPost)
@@ -156,7 +167,7 @@ describe('/', () => {
         .then(({ body }) => {
           expect(body.msg).to.equal('BAD REQUEST invalid input');
         }));
-      it('UNPROCESSED ENTITY statuscode:422', () => {
+      it('UNPROCESSED ENTITY statuscode:404', () => {
         request.get('/api/articles/999999')
           .expect(404)
           .then(({ body }) => {
@@ -200,16 +211,16 @@ describe('/', () => {
       it('GET status : 200 and returns an array of 1objects', () => request.get('/api/articles/1')
         .expect(200)
         .then((res) => {
-          expect(res.body.article[0]).to.be.an('object');
-          expect(res.body.article[0].article_id).to.equal(1);
-          expect(res.body.article[0]).to.contain.keys('article_id', 'title', 'body', 'created_at', 'topic', 'author', 'votes', 'comment_count');
+          expect(res.body.article).to.be.an('object');
+          expect(res.body.article.article_id).to.equal(1);
+          expect(res.body.article).to.contain.keys('article_id', 'title', 'body', 'created_at', 'topic', 'author', 'votes', 'comment_count');
         }));
       it('GET status : 200 and returns an array of 2objects', () => request.get('/api/articles/5')
         .expect(200)
         .then((res) => {
-          expect(res.body.article[0]).to.be.an('object');
-          expect(res.body.article[0].article_id).to.equal(5);
-          expect(res.body.article[0]).to.contain.keys('article_id', 'title', 'body', 'created_at', 'topic', 'author', 'votes', 'comment_count');
+          expect(res.body.article).to.be.an('object');
+          expect(res.body.article.article_id).to.equal(5);
+          expect(res.body.article).to.contain.keys('article_id', 'title', 'body', 'created_at', 'topic', 'author', 'votes', 'comment_count');
         }));
       it('PATCH status : 200 and increments vote of article by new vote amount', () => request.patch('/api/articles/1')
         .send({ inc_votes: 1 })
@@ -229,16 +240,14 @@ describe('/', () => {
       it('GET status : 400 and returns an array of comments for a given ID', () => request.get('/api/articles/gary/comments')
         .expect(400)
         .then(({ body }) => {
-          console.log(body);
           expect(body.msg).to.equal('BAD REQUEST article_id type is invalid');
         }));
 
-      it('POST status : 400 and returns an adfgdfments for a given ID', () => {
+      it('POST status : 400 and returns an error message', () => {
         const commentToPost = { username: 'icellusedkars', body: 'words cant explain how brilliant this article' };
         request.post('/api/articles/500/comments').send(commentToPost)
           .expect(400)
           .then(({ body }) => {
-            console.log(body);
             expect(body.msg).to.equal('BAD REQUEST article_id is invalid');
           });
       });
@@ -310,22 +319,42 @@ describe('/', () => {
         }));
     });
     describe('/users', () => {
-      const userToPost = { username: 'george2000', avatar_url: 'https://avatars2.githubusercontent.com/u/24394918?s=400&v=6', name: 'george' };
-
-
       it('GET status : 200 and returns an array of user objects', () => request.get('/api/users')
         .expect(200)
         .then(({ body }) => {
           expect(body.users.length).to.equal(3);
           expect(body.users[0]).contain.keys('username', 'avatar_url', 'name');
         }));
-      it('POST status : 201 and returns an array with a single user object', () => request.post('/api/users')
-        .send(userToPost)
-        .expect(201)
-        .then(({ body }) => {
-          expect(body.user).to.eql(userToPost);
-          expect(body.user).contain.keys('username', 'avatar_url', 'name');
-        }));
+      it('POST status : 201 and returns an array with a single user object', () => {
+        const userToPost = { username: 'george2000', avatar_url: 'https://avatars2.githubusercontent.com/u/24394918?s=400&v=6', name: 'george' };
+        request.post('/api/users')
+          .send(userToPost)
+          .expect(201)
+          .then(({ body }) => {
+            expect(body.user).to.eql(userToPost);
+            expect(body.user).contain.keys('username', 'avatar_url', 'name');
+          });
+      });
+      it('POST status : 400 and an error message', () => {
+        const userToPost = { username: 'icellusedkars', avatar_url: 'https://avatars2.githubusercontent.com/u/24394918?s=400&v=6' };
+        request.post('/api/users')
+          .send(userToPost)
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).to.equal('BAD REQUEST information required');
+          });
+      });
+      it('POST status : 422 and an error message', () => {
+        const userToPost = { username: 'icellusedkars', avatar_url: 'https://avatars2.githubusercontent.com/u/24394918?s=400&v=6', name: 'sam' };
+        return request.post('/api/users')
+          .send(userToPost)
+          .expect(422)
+          .then(({ body }) => {
+            expect(body.msg).to.equal('BAD REQUEST duplicate key value violates unique constraint "topics_pkey"');
+          });
+      });
+ 
+
       it('BAD METHOD statuscode:405', () => request.patch('/api/users')
         .expect(405)
         .then(({ body }) => {
@@ -337,6 +366,11 @@ describe('/', () => {
         .expect(200)
         .then(({ body }) => {
           expect(body.user).contain.keys('username', 'avatar_url', 'name');
+        }));
+      it('GET status : 404 returns a bad request error essage', () => request.get('/api/users/kars')
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).to.equal('PAGE NOT FOUND user does not exist');
         }));
     });
   });

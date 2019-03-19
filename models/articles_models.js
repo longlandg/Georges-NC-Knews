@@ -1,7 +1,5 @@
 const connection = require('../db/connection');
 
-console.log('im in the articles model');
-
 exports.fetchAllArticles = (conditions, sort_by,
   order) => connection
   .select('articles.article_id', 'articles.title', 'articles.body', 'articles.votes', 'articles.topic', 'articles.author', 'articles.created_at')
