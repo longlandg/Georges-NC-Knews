@@ -2,11 +2,12 @@ const {
   fetchAllArticles, addComment, fetchCommentsbyArticleId, removeArticle, fetchArticleById, addArticle, updateArticle,
 } = require('../models/articles_models');
 
-let orderError = {};
 
 exports.getAllArticles = (req, res, next) => {
   const { sort_by, order = 'desc' } = req.query;
   let conditions = {};
+
+
   Object.keys(req.query).forEach((key) => {
     if (key === 'author') {
       conditions = { 'articles.author': req.query[key] };
@@ -16,13 +17,17 @@ exports.getAllArticles = (req, res, next) => {
       conditions = { 'articles.created_at': req.query[key] };
     }
   });
+
   if (order !== 'asc' && order !== 'desc') {
-    orderError = { code: 13 };
-    next(orderError);
+    next({ code: '13' });
   } else {
     fetchAllArticles(conditions, sort_by, order)
       .then((articles) => {
-        res.status(200).send({ articles });
+        if (articles.length === 0) {
+          next({ code: '23503' });
+        } else {
+          res.status(200).send({ articles });
+        }
       })
       .catch(next);
   }
@@ -30,13 +35,13 @@ exports.getAllArticles = (req, res, next) => {
 
 exports.getArticleById = (req, res, next) => {
   const { article_id } = req.params;
-  if (typeof (Number(article_id)) !== 'number') {
-    next(res.status(400).send({ msg: 'BAD REQUEST invalid input' }));
+  if (isNaN(Number(article_id))) {
+    next({ code: '22P02' });
   } else {
     fetchArticleById(article_id)
       .then(([article]) => {
-        if (article.length === 0) {
-          (next(res.status(404).send({ msg: 'BAD REQUEST input does not exist' })));
+        if (article === undefined) {
+          next({ code: '23503' });
         } else {
           res.status(200).send({ article });
         }
@@ -67,11 +72,11 @@ exports.patchArticleById = (req, res, next) => {
   const { article_id } = req.params;
   const { inc_votes } = req.body;
   if (inc_votes === undefined) {
-    (next(res.status(400).send({ msg: 'BAD REQUEST missing keys' })));
+    next({ code: '22P02' });
   } else if (Object.keys(req.body).length !== 1) {
-    (next(res.status(400).send({ msg: 'BAD REQUEST too many keys' })));
+    res.status(400);
   } else if (isNaN(Number(inc_votes))) {
-    (next(res.status(400).send({ msg: 'BAD REQUEST invalid value' })));
+    next({ code: '22P02' });
   } else {
     updateArticle(article_id, inc_votes)
       .then(([updatedArticle]) => {
@@ -85,12 +90,12 @@ exports.patchArticleById = (req, res, next) => {
 exports.deleteArticleById = (req, res, next) => {
   const { article_id } = req.params;
   if (isNaN(Number(article_id))) {
-    res.status(400).send({ msg: 'BAD REQUEST article_id type is invalid' });
+    next({ code: '22P02' });
   } else {
     removeArticle(article_id)
       .then((delart) => {
         if (delart === 0) {
-          (next(res.status(400).send({ msg: 'BAD REQUEST article_id does not exist' })));
+          next({ code: '23503' });
         } else {
           res.status(204).send({});
         }
@@ -102,9 +107,9 @@ exports.deleteArticleById = (req, res, next) => {
 exports.getAllCommentsByArticleId = (req, res, next) => {
   const { article_id } = req.params;
   const { sort_by, order } = req.query;
-  const int = Number(article_id);
-  if (isNaN(int)) {
-    res.status(400).send({ msg: 'BAD REQUEST article_id type is invalid' });
+
+  if (isNaN(Number(article_id))) {
+    next({ code: '22P02' });
   } else {
     fetchCommentsbyArticleId(article_id, sort_by, order)
       .then((comments) => {
@@ -118,7 +123,6 @@ exports.getAllCommentsByArticleId = (req, res, next) => {
 exports.postCommentOnArticle = (req, res, next) => {
   const commentToPost = req.body;
   const { article_id } = req.params;
-  const int = Number(article_id);
 
   const formattedPost = {
     author: commentToPost.username,

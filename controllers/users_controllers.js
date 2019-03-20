@@ -24,7 +24,7 @@ exports.getUser = (req, res, next) => {
   fetchUser(username)
     .then(([user]) => {
       if (user === undefined) {
-        res.status(404).send({ msg: 'PAGE NOT FOUND user does not exist' });
+        next({ code: '23503' });
       } else {
         res.status(200).send({ user });
       }

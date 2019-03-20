@@ -20,14 +20,12 @@ describe('/', () => {
   });
 
 
-  describe('/api', () => {
-    it('statuscode: 404 with appropriate message', () => request.get('/api')
-    .expect(404)
-    .then(({ body }) => {
-      expect(body.msg).to.equal('route not found');
-    }));
-
-
+  describe('/Api', () => {
+    it('statuscode: 404 with appropriate message', () => request.get('/Api')
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).to.equal('route not found');
+      }));
 
 
     describe('/topics', () => {
@@ -60,7 +58,7 @@ describe('/', () => {
             expect(body.msg).to.equal('BAD REQUEST information required');
           });
       });
-      it('BAD REQUEST statuscode:422, when hhhhhpassed a malformed body', () => {
+      it('BAD REQUEST statuscode:422, when given a malformed body', () => {
         const badRequestPost = { slug: 'mitch', description: 'The tastiest of all the fruits' };
         return request.post('/api/topics')
           .send(badRequestPost)
@@ -76,18 +74,22 @@ describe('/', () => {
         }));
     });
 
-    describe('/articles', () => {
+    describe.only('/articles', () => {
       it('BAD QUERY statuscode:400', () => request.get('/api/articles?sort_by=bca')
         .expect(400)
         .then(({ body }) => {
           expect(body.msg).to.equal('BAD REQUEST column does not exist');
         }));
-      xit('BAD fffQUERY statuscode:400', () => request.get('/api/articles?order=abddddddddddbc')
+      it('BAD QUERY statuscode:400', () => request.get('/api/articles?order=abddddddddddbc')
         .expect(400)
         .then(({ body }) => {
-          expect(body.msg).to.equal('BAD REQUEST sort column does not exist');
+          expect(body.msg).to.equal('BAD REQUEST column does not exist');
         }));
-
+      it('BAD QUERY statuscode:400 author does not exist', () => request.get('/api/articles?author=gary')
+        .expect(422)
+        .then(({ body }) => {
+          expect(body.msg).to.equal('UNPROCESSED ENTITY input not in table');
+        }));
 
       it('GET status : 200 and returns an array of objects', () => request.get('/api/articles')
         .expect(200)
@@ -167,11 +169,11 @@ describe('/', () => {
         .then(({ body }) => {
           expect(body.msg).to.equal('BAD REQUEST invalid input');
         }));
-      it('UNPROCESSED ENTITY statuscode:404', () => {
+      it('UNPROCESSED ENTITY statuscode:422', () => {
         request.get('/api/articles/999999')
-          .expect(404)
+          .expect(422)
           .then(({ body }) => {
-            expect(body.msg).to.equal('BAD REQUEST input does not exist');
+            expect(body.msg).to.equal('UNPROCESSED ENTITY input not in table');
           });
       });
       it('BAD REQUEST statuscode:400, when trying to patch with no body', () => {
@@ -179,7 +181,7 @@ describe('/', () => {
           .send({})
           .expect(400)
           .then(({ body }) => {
-            expect(body.msg).to.equal('BAD REQUEST missing keys');
+            expect(body.msg).to.equal('BAD REQUEST invalid input');
           });
       });
       it('BAD REQUEST statuscode:400, when trying to patch withadditional keys', () => {
@@ -190,12 +192,12 @@ describe('/', () => {
             expect(body.msg).to.equal('BAD REQUEST too many keys');
           });
       });
-      it('BAD REQUEST statuscode:400, when trying to delete where article id does not exist', () => {
+      it('unprocessable entity statuscode:422, when trying to delete where article id does not exist', () => {
         request.delete('/api/articles/500')
 
-          .expect(400)
+          .expect(422)
           .then(({ body }) => {
-            expect(body.msg).to.equal('BAD REQUEST article_id does not exist');
+            expect(body.msg).to.equal('UNPROCESSED ENTITY input not in table');
           });
       });
       it('BAD REQUEST statuscode:400, when trying to delete where article id is not a number', () => {
@@ -203,7 +205,7 @@ describe('/', () => {
 
           .expect(400)
           .then(({ body }) => {
-            expect(body.msg).to.equal('BAD REQUEST article_id type is invalid');
+            expect(body.msg).to.equal('BAD REQUEST invalid input');
           });
       });
 
@@ -240,15 +242,15 @@ describe('/', () => {
       it('GET status : 400 and returns an array of comments for a given ID', () => request.get('/api/articles/gary/comments')
         .expect(400)
         .then(({ body }) => {
-          expect(body.msg).to.equal('BAD REQUEST article_id type is invalid');
+          expect(body.msg).to.equal('BAD REQUEST invalid input');
         }));
 
-      it('POST status : 400 and returns an error message', () => {
+      it('POST status : 422 and returns an error message', () => {
         const commentToPost = { username: 'icellusedkars', body: 'words cant explain how brilliant this article' };
         request.post('/api/articles/500/comments').send(commentToPost)
-          .expect(400)
+          .expect(422)
           .then(({ body }) => {
-            expect(body.msg).to.equal('BAD REQUEST article_id is invalid');
+            expect(body.msg).to.equal('UNPROCESSED ENTITY input not in table');
           });
       });
 
@@ -278,12 +280,15 @@ describe('/', () => {
       });
     });
     describe('/comments/:comments_id', () => {
-      it('BADPATCH status : 400 when given no key', () => request.patch('/api/articles/5')
-        .send({})
-        .expect(400)
-        .then(({ body }) => {
-          expect(body.msg).to.equal('BAD REQUEST missing keys');
-        }));
+      it('BADPATCH status : 400 when given no key', () => {
+        const commentToPost = { };
+        request.patch('/api/articles/5')
+          .send({ commentToPost })
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).to.equal('BAD REQUEST invalid input');
+          });
+      });
 
 
       it('BAD REQUEST statuscode:400, when trying to delete where article id does not exist', () => {
@@ -291,7 +296,7 @@ describe('/', () => {
 
           .expect(400)
           .then(({ body }) => {
-            expect(body.msg).to.equal('BAD REQUEST article_id does not exist');
+            expect(body.msg).to.equal('BAD REQUEST column does not exist');
           });
       });
       it('BAD REQUEST statuscode:400, when trying to delete where article id is not a number', () => {
@@ -299,7 +304,7 @@ describe('/', () => {
 
           .expect(400)
           .then(({ body }) => {
-            expect(body.msg).to.equal('BAD REQUEST article_id type is invalid');
+            expect(body.msg).to.equal('BAD REQUEST invalid input');
           });
       });
 
@@ -353,7 +358,7 @@ describe('/', () => {
             expect(body.msg).to.equal('BAD REQUEST duplicate key value violates unique constraint "topics_pkey"');
           });
       });
- 
+
 
       it('BAD METHOD statuscode:405', () => request.patch('/api/users')
         .expect(405)
@@ -367,10 +372,10 @@ describe('/', () => {
         .then(({ body }) => {
           expect(body.user).contain.keys('username', 'avatar_url', 'name');
         }));
-      it('GET status : 404 returns a bad request error essage', () => request.get('/api/users/kars')
-        .expect(404)
+      it('GET status : 422 returns a UNPROCESSED ENTITY error essage', () => request.get('/api/users/kars')
+        .expect(422)
         .then(({ body }) => {
-          expect(body.msg).to.equal('PAGE NOT FOUND user does not exist');
+          expect(body.msg).to.equal('UNPROCESSED ENTITY input not in table');
         }));
     });
   });
