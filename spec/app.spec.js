@@ -21,10 +21,15 @@ describe('/', () => {
 
 
   describe('/Api', () => {
-    it('statuscode: 404 with appropriate message', () => request.get('/Api')
+    xit('statuscode: 404 with appropriate message', () => request.get('/Api')
       .expect(404)
       .then(({ body }) => {
         expect(body.msg).to.equal('route not found');
+      }));
+    it('statuscode: 200 with appropriate message', () => request.get('/api')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).contain.keys('endpoint');
       }));
 
 
@@ -74,7 +79,7 @@ describe('/', () => {
         }));
     });
 
-    describe.only('/articles', () => {
+    describe('/articles', () => {
       it('BAD QUERY statuscode:400', () => request.get('/api/articles?sort_by=bca')
         .expect(400)
         .then(({ body }) => {

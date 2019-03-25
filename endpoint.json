@@ -1,0 +1,18 @@
+{"GET /api/topics":"responds with an array of topic objects",  
+    "POST /api/topics":"responds with the posted topic object",  
+    "GET /api/articles":"responds with an articles array of articles objects",  
+    "POST /api/articles":"responds with the posted article",  
+    "GET /api/articles/:article_id":"responds with an article object",  
+    "PATCH /api/articles/:article_id":"responds with the updated article", 
+    "DELETE /api/articles/:article_id":"responds with status 204 and no content",  
+    "GET /api/articles/:article_id/comments":"responds with comments for the given article_id",  
+    "POST /api/articles/:article_id/comments":"responds with the posted comment",  
+    "PATCH /api/comments/:comment_id":"responds with the updated comment",  
+    "DELETE /api/comments/:comment_id":"responds with status 204 and no content",  
+    "GET /api/users":"responds with an array of user objects",  
+    "POST /api/users":"responds with the posted user",  
+    "GET /api/users/:username":"responds with a user object"}
+
+
+
+
