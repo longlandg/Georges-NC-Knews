@@ -20,12 +20,8 @@ describe('/', () => {
   });
 
 
-  describe('/Api', () => {
-    xit('statuscode: 404 with appropriate message', () => request.get('/Api')
-      .expect(404)
-      .then(({ body }) => {
-        expect(body.msg).to.equal('route not found');
-      }));
+  describe('/api', () => {
+   
     it('statuscode: 200 with appropriate message', () => request.get('/api')
       .expect(200)
       .then(({ body }) => {
