@@ -15,9 +15,6 @@ exports.fetchAllArticles = (conditions, sort_by, order) =>
     .where(conditions)
     .leftJoin("comments", "articles.article_id", "=", "comments.article_id")
     .groupBy("articles.article_id")
-    .limit(10)
-    .offset(10)
-    .count("articles.article_id as article_count")
     .count("comments.comments_id as comment_count")
     .orderBy(sort_by || "articles.created_at", order || "desc");
 
