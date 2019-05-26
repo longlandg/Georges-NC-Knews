@@ -29,7 +29,7 @@ Install using the Node Package Manager, eg:
 npm i express
 ```
 
-The Following development dependencies will also need to be installed: 
+The following development dependencies will also need to be installed: 
 
 ```
     "chai": "^4.2.0",
