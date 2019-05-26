@@ -4,14 +4,12 @@ exports.patchComments = (req, res, next) => {
   const { comments_id } = req.params;
   const { inc_votes } = req.body;
 
-
   updateComment(comments_id, inc_votes)
     .then(([comment]) => {
-      res.status(202).send({ comment });
+      res.status(200).send({ comment });
     })
     .catch(next);
 };
-
 
 exports.deleteCommentsById = (req, res, next) => {
   const { comments_id } = req.params;
