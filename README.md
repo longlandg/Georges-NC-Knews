@@ -108,7 +108,7 @@ npm run seed
 
 ## End Points 
 
-The Following end Points are available:
+The following end points are available:
 
 ```
 GET /api/topics "responds with an array of topic objects"
@@ -139,7 +139,7 @@ GET /api/users/:username "responds with a user object"
 
 NC-Knews was created using test driven development
 
-Unit tests are locates in the spec folder
+Unit tests are located in the spec folder
 
 utils.spec.js tests all functions required for seeding the Database
 
