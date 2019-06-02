@@ -9,7 +9,7 @@ module.exports = [
     username: "grumpy19",
     name: "Paul Grump",
     avatar_url:
-      "https://www.google.com/url?sa=i&source=images&cd=&ved=2ahUKEwi8s_aswMriAhV85-AKHacEDKsQjRx6BAgBEAU&url=https%3A%2F%2Fmrmen.fandom.com%2Fwiki%2FMr._Grumpy&psig=AOvVaw21Ku8NeXVbHkE9yGgBrogj&ust=1559554754768802"
+      "https://vignette.wikia.nocookie.net/mrmen/images/f/f7/TVmr.grumpy.jpg/revision/latest/scale-to-width-down/180?cb=20090712073450"
   },
   {
     username: "happyamy2016",
@@ -21,7 +21,7 @@ module.exports = [
     username: "cooljmessy",
     name: "Peter Messy",
     avatar_url:
-      "https://www.google.com/url?sa=i&source=images&cd=&ved=2ahUKEwi_jOiTwMriAhVO0uAKHaU6AckQjRx6BAgBEAU&url=%2Furl%3Fsa%3Di%26source%3Dimages%26cd%3D%26ved%3D%26url%3Dhttps%253A%252F%252Fmrmen.fandom.com%252Fwiki%252FMr._Messy%26psig%3DAOvVaw2WIBogok0Arws2zHlnYvqk%26ust%3D1559554679917811&psig=AOvVaw2WIBogok0Arws2zHlnYvqk&ust=1559554679917811"
+      "https://vignette1.wikia.nocookie.net/mrmen/images/7/7f/Mr_Happy.jpg/revision/latest?cb=20140102171729"
   },
   {
     username: "weegembump",
