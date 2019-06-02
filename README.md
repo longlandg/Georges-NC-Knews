@@ -1,347 +1,151 @@
-# BE2-NC-Knews
+# NC-Knews Backend
 
-## Northcoders News API
+This is NC-Knews backend, a RESTful API which provides the backend logic for Northcoders News, a reddit style news site and discussion website, which allows users to post articles and comments, vote on articles and comments, filter articles by topic, sort articles by date, number of comments and number of votes, delete their own articles and comments.
 
-### Background
+## Getting Started 
 
-We will be building the API to use in the Northcoders News Sprint during the Front End block of the course.
+1. Fork the repository
+2. Clone the Fork of this repository to you local machine
+3. Initialise the repository using the node package manager
 
-Our database will be PSQL, and you will interact with it using [Knex](https://knexjs.org).
-
-#### NOTE 1:
-
-For this sprint ensure you have the eslint extension installed in VS-Code as it will help to enforce best practices when you are writing your code.
-
-#### NOTE 2:
-
-Read this README.md carefully! :)
-
-### Step 1 - Seeding
-
-Data has been provided for both testing and development environments so you will need to write a seed function to seed your database. You should think about how you will write your seed file to use either test data or dev data depending on the environment that you're running in.
-
-1. You should have separate tables for topics, articles, users and comments, and you will need to think carefully about the order in which you seed your data.
-
-- Each topic should have:
-
-  * `slug` field which is a unique string that acts as the table's primary key
-  * `description` field which is a string giving a brief description of a given topic
-
-- Each user should have:
-
-  * `username` which is the primary key & unique
-  * `avatar_url`
-  * `name`
-
-- Each article should have:
-  * `article_id` which is the primary key
-  * `title`
-  * `body`
-  * `votes` defaults to 0
-  * `topic` field which references the slug in the topics table
-  * `author` field that references a user's primary key (username)
-  * `created_at` defaults to the current date
-
-* Each comment should have:
-  * `comment_id` which is the primary key
-  * `author` field that references a user's primary key (username)
-  * `article_id` field that references an article's primary key
-  * `votes` defaults to 0
-  * `created_at` defaults to the current date
-  * `body`
-
-- **NOTE:** psql expects Date types to be in a date format - not a timestamp! However, you can easily turn a timestamp into a date using JS...
-
-***
-
-### Step 2 - Building and Testing
-
-1.  Build your Express app
-2.  Mount an API Router onto your app
-3.  Define the routes described below
-4.  Define controller functions for each of your routes.
-5.  Use proper project configuration from the offset, being sure to treat development and test differently.
-6.  Test each route **as you go**, checking both successful requests and the variety of errors you could expect to encounter.
-
-**HINT** You will need to take advantage of knex migrations in order to efficiently test your application.
-
-***
-
-#### Routes
-
-Your server should have the following end-points:
-
-```http
-GET /api/topics
-POST /api/topics
-
-GET /api/articles
-POST /api/articles
-
-GET /api/articles/:article_id
-PATCH /api/articles/:article_id
-DELETE /api/articles/:article_id
-
-GET /api/articles/:article_id/comments
-POST /api/articles/:article_id/comments
-
-PATCH /api/comments/:comment_id
-DELETE /api/comments/:comment_id
-
-GET /api/users
-POST /api/users
-
-GET /api/users/:username
-
-GET /api
+```
+npm init 
 ```
 
-***
+## Prerequisites
 
-#### Route Requirements
+The following dependancies will need to be installed: 
 
-These have been split into **must haves** and some slightly more advanced _nice to have / if time_. The _if time_ tasks should be **left until you have tested and implemented all other functionality**.
+```
+    "body-parser": "^1.18.3"
+    "cors": "^2.8.5"
+    "express": "^4.16.4"
+    "knex": "^0.15.2"
+    "pg": "^7.6.1"
+```
+Install using the Node Package Manager, eg:
 
-***
-
-```http
-GET /api/topics
+```
+npm i express
 ```
 
-##### Responds with
-- an array of topic objects, each of which should have the following properties:
-  * `slug`
-  * `description`
+The following development dependencies will also need to be installed: 
 
-***
-
-```http
-POST /api/topics
+```
+    "chai": "^4.2.0",
+    "eslint": "^5.9.0",
+    "eslint-config-airbnb": "^17.1.0",
+    "eslint-plugin-import": "^2.14.0",
+    "husky": "^1.1.4",
+    "mocha": "^6.0.2",
+    "supertest": "^3.4.2"
 ```
 
-##### Request body accepts
-- an object containing the following properties:
-  * `slug` which must be unique
-  * `description`
+To be installed as development dependencies using the -D command, eg:
 
-##### Responds with
-- the posted topic object
-
-***
-
-```http
-GET /api/articles
+```
+npm i chai -D
 ```
 
-##### Responds with
-- an `articles` array of article objects, each of which should have the following properties:
-  * `author` which is the `username` from the users table
-  * `title`
-  * `article_id`
-  * `topic`
-  * `created_at`
-  * `votes`
-  * `comment_count` which is the total count of all the comments with this article_id - you should make use of knex queries in order to achieve this
+NC-Knews backend uses PostgreSQL as it's relational database, PostgreSQL should be installed on your local machine. Instructions can be found at the following url https://www.postgresql.org/docs/9.3/tutorial-install.html
 
-##### Should accept queries
-  * `author`, which filters the articles by the username value specified in the query
-  * `topic`, which filters the articles by the topic value specified in the query
-  * `sort_by`, which sorts the articles by any valid column (defaults to date)
-  * `order`, which can be set to `asc` or `desc` for ascending or descending (defaults to descending)
+## Configuration File
 
-##### If time (the following will make pagination easier when you get to building your front-end application)
-- accept the following queries:
-  * `limit`, which limits the number of responses (defaults to 10)
-  * `p`, stands for page which specifies the page at which to start (calculated using limit)
-- add a `total_count` property, displaying the total number of articles (this should display the total number of articles with any filters applied, discounting the limit)
+Create a configuration file and name it "knexfile.js" and should be saved in the project root folder. The "knexfile.js" is already listed in the .gitignore file and will not be pushed to github.
 
-***
+```javascript
+const { DB_URL } = process.env;
+const ENV = process.env.NODE_ENV || 'development';
 
-```http
-POST /api/articles
+
+const baseConfig = {
+  client: 'pg',
+    seed: {
+    directory: './db/seeds',
+},
+   migrations: {
+    directory: './db/migrations',
+  },
+  },
+};
+
+const dbConfig = {
+  production: {
+     connection: `${DB_URL}?ssl=true`,
+  },
+  development: {
+    connection: {
+      database: 'nc_knews',
+      username: `${your PSQL username}`, 
+      password: `${your PSQL password}`,
+    },
+  },
+  test: {
+    connection: {
+      database: 'nc_knews_test',
+      username: `${your PSQL username}`,
+      password: `${your PSQL password}`,
+    },
+  },
+};
+
+module.exports = { ...baseConfig, ...dbConfig[ENV] };
 ```
 
-##### Request body accepts
-- an object containing the following properties:
-  * `title`
-  * `body`
-  * `topic`
-  * `username`
+Please note in both the "connection" and "test" objects, the fields user & password are not required if you are using a Mac, and should be omitted.
 
-##### Responds with
-- the posted article
+##  Initialising and Seeding the NC_Knews Database
 
-***
+The following commands should be run in the termainal
 
-```http
-GET /api/articles/:article_id
+```
+npm run setup-dbs
+
+npm run make-migration
+
+npm run seed
 ```
 
-##### Responds with
-- an article object,  which should have the following properties:
-  * `author` which is the `username` from the users table
-  * `title`
-  * `article_id`
-  * `body`
-  * `topic`
-  * `created_at`
-  * `votes`
-  * `comment_count` which is the total count of all the comments with this article_id - you should make use of knex queries in order to achieve this
+## End Points 
 
-***
+The following end points are available:
 
-```http
-PATCH /api/articles/:article_id
+```
+GET /api/topics "responds with an array of topic objects"
+POST /api/topics "responds with the posted topic object"
+
+GET /api/articles "responds with an article arrray of articles objects"
+POST /api/articles "responds with the posted article"
+
+GET /api/articles/:article_id "responds with an article object"
+PATCH /api/articles/:article_id "responds with the updated article"
+DELETE /api/articles/:article_id "responds with status 204 and no content"
+
+GET /api/articles/:article_id/comments "responds with comments for the given article article_id"
+POST /api/articles/:article_id/comments "responds with the posted comment"
+
+PATCH /api/comments/:comments_id "responds with the updated comments"
+DELETE /api/comments/:comments_id "responds with status 204 and no content"
+
+GET /api/users "responds with an array of user objects"
+POST /api/users "responds with the posted user"
+
+GET /api/users/:username "responds with a user object"
+
 ```
 
-##### Request body accepts
-- an object in the form `{ inc_votes: newVote }`
 
-  * `newVote` will indicate how much the `votes` property in the database should be updated by
+## Unit Testing
 
-  e.g.
+NC-Knews was created using test driven development
 
-  `{ inc_votes : 1 }` would increment the current article's vote property by 1
+Unit tests are located in the spec folder
 
-  `{ inc_votes : -100 }` would decrement the current article's vote property by 100
+utils.spec.js tests all functions required for seeding the Database
 
-##### Responds with
-- the updated article
+app.spec.js tests end points functionality and error handling
 
-***
-
-```http
-DELETE /api/articles/:article_id
+In the terminal:
 ```
-##### Should
-- delete the given article by `article_id`
-
-##### Responds with
-- status 204 and no content
-
-***
-
-```http
-GET /api/articles/:article_id/comments
+npm test
 ```
-
-##### Responds with
-- an array of comments for the given `article_id` of which each comment should have the following properties:
-  * `comment_id`
-  * `votes`
-  * `created_at`
-  * `author` which is the `username` from the users table
-  * `body`
-
-##### Accepts queries
-  * `sort_by`, which sorts the articles by any valid column (defaults to date)
-  * `order`, which can be set to `asc` or `desc` for ascending or descending (defaults to descending)
-
-##### If time  (the following will make pagination easier when you get to building your front-end application)
-- accept the following queries:
-  * `limit`, which limits the number of responses (defaults to 10)
-  * `p`, stands for page which specifies the page at which to start (calculated using limit)
-
-***
-
-```http
-POST /api/articles/:article_id/comments
-```
-
-##### Request body accepts
-- an object with the following properties:
-  * `username`
-  * `body`
-
-##### Responds with
-- the posted comment
-
-***
-
-```http
-PATCH /api/comments/:comment_id
-```
-##### Request body accepts
-- an object in the form `{ inc_votes: newVote }`
-
-  * `newVote` will indicate how much the `votes` property in the database should be updated by
-
-  e.g.
-
-  `{ inc_votes : 1 }` would increment the current article's vote property by 1
-
-  `{ inc_votes : -1 }` would decrement the current article's vote property by 1
-
-##### Responds with
-- the updated comment
-
-***
-
-```http
-DELETE /api/comments/:comment_id
-```
-
-##### Should
-- delete the given comment by `comment_id`
-
-##### Responds with
-- status 204 and no content
-
-***
-
-```http
-GET /api/users
-```
-
-##### Responds with
-- an array of user objects, each of which should have the following properties:
-  * `username`
-  * `avatar_url`
-  * `name`
-
-***
-
-```http
-POST /api/users
-```
-
-##### Request body accepts
-- an object containing the following properties:
-  * `username`
-  * `avatar_url`
-  * `name`
-
-##### Responds with
-- the posted user
-
-***
-
-```http
-GET /api/users/:username
-```
-
-##### Responds with
-- a user object which should have the following properties:
-  * `username`
-  * `avatar_url`
-  * `name`
-
-***
-
-```http
-GET /api
-```
-##### Responds with
-- JSON describing all the available endpoints on your API
-
-***
-
-### Step 3 - Hosting
-
-Make sure your application and your database is hosted using heroku
-
-### Step 4 - Preparing for your review and portfolio
-
-Finally, you should write a README for this project (and remove this one). The README should be broken down like this: https://gist.github.com/PurpleBooth/109311bb0361f32d87a2
-
-It should also include the link where your heroku app is hosted.
