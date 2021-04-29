@@ -21,7 +21,11 @@ module.exports = [
     username: "cooljmessy",
     name: "Peter Messy",
     avatar_url:
+<<<<<<< HEAD
       "https://vignette.wikia.nocookie.net/mrmen/images/1/1a/MR_MESSY_4A.jpg/revision/latest/scale-to-width-down/250?cb=20170730171002"
+=======
+      "https://vignette1.wikia.nocookie.net/mrmen/images/7/7f/Mr_Happy.jpg/revision/latest?cb=20140102171729"
+>>>>>>> 057e060c2891ea478db3156076640bdde6136328
   },
   {
     username: "weegembump",
